@@ -319,7 +319,7 @@
 cp vote-rc.yaml vote-dc.yaml
 </code></pre>
 
-<p>deploymentconfig spec (deploymentconfig.spec) contains everything that replica set has + strategy. Lets add it as follows,</p>
+<p><a href="https://docs.okd.io/latest/dev_guide/deployments/deployment_strategies.html">deploymentconfig spec</a>  contains everything that replica set has + strategy. Lets add it as follows,</p>
 <p><code>file: vote-dc.yaml</code></p>
 <pre><code>apiVersion: apps.openshift.io/v1
 kind: deploymentConfig
@@ -436,6 +436,12 @@ oc rollout history deploy/vote --revision=xx
 <p>To undo to a sane version (for example revision 3)</p>
 <pre><code>oc rollout undo deploy/vote --to-revision=2
 </code></pre>
+
+<h5 id="references">References</h5>
+<ul>
+<li><a href="https://docs.okd.io/latest/dev_guide/deployments/deployment_strategies.html">deploymentconfig documentation</a></li>
+<li><a href="https://docs.okd.io/latest/rest_api/apis-apps.openshift.io/v1.DeploymentConfig.html">deploymentconfig api refence</a></li>
+</ul>
               
             </div>
           </div>
