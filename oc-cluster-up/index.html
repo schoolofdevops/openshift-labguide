@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Lab O101 - Setting up Openshift Environment - Kubernetes Lab Guide</title>
+  <title>Lab OC101 - Setting up Openshift Environment - Kubernetes Lab Guide</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Lab O101 - Setting up Openshift Environment";
+    var mkdocs_page_name = "Lab OC101 - Setting up Openshift Environment";
     var mkdocs_page_input_path = "oc-cluster-up.md";
     var mkdocs_page_url = null;
   </script>
@@ -102,7 +102,7 @@
                 </li>
                 <li class=" current">
                     
-    <a class="current" href="./">Lab O101 - Setting up Openshift Environment</a>
+    <a class="current" href="./">Lab OC101 - Setting up Openshift Environment</a>
     <ul class="subnav">
             
     <li class="toctree-l3"><a href="#setting-up-openshift-environment">Setting up Openshift environment</a></li>
@@ -120,12 +120,16 @@
     
         <ul>
         
-            <li><a class="toctree-l4" href="#creating-a-new-project">Creating a new Project</a></li>
+            <li><a class="toctree-l4" href="#create-and-switch-to-a-new-project">Create and switch to a new Project</a></li>
         
         </ul>
     
 
     </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../02_devops_php_app/">LAB OC102 - Deploying app from Openshift Console</a>
                 </li>
                 <li class="">
                     
@@ -295,7 +299,7 @@
         
       
     
-    <li>Lab O101 - Setting up Openshift Environment</li>
+    <li>Lab OC101 - Setting up Openshift Environment</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -344,12 +348,22 @@ oc cluster up --public-hostname=demo-02.schoolofdevops.org
 
 <h1 id="from-web-use-httpsdemo-02schoolofdevopsorg8443console-login-with-user-developer-any-password">from web use https://demo-02.schoolofdevops.org:8443/console (login with user developer, any password)</h1>
 <p>oc login -u system:admin</p>
-<h3 id="creating-a-new-project">Creating a new Project</h3>
-<pre><code>oc new-project instavote  --display-name=&quot;Instavote&quot; --description=&quot;Example Voting App&quot;
+<h3 id="create-and-switch-to-a-new-project">Create and switch to a new Project</h3>
+<pre><code>oc login -u developer
 
 oc projects
 
+oc new-project test
+
+oc projects
+
+oc new-project instavote  --display-name=&quot;Instavote&quot; --description=&quot;Example Voting App&quot;
+
 oc project instavote
+
+oc config get-contexts
+
+
 </code></pre>
               
             </div>
@@ -358,7 +372,7 @@ oc project instavote
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../6-vote-kubernetes_deployment/" class="btn btn-neutral float-right" title="Lab K106 - Defining Release Strategy with Deployments">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../02_devops_php_app/" class="btn btn-neutral float-right" title="LAB OC102 - Deploying app from Openshift Console">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../7-vote-exposing_app_with_service/" class="btn btn-neutral" title="Lab K105 - Load Balancing and Service Discovery with Services"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -390,7 +404,7 @@ oc project instavote
         <span><a href="../7-vote-exposing_app_with_service/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../6-vote-kubernetes_deployment/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../02_devops_php_app/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
