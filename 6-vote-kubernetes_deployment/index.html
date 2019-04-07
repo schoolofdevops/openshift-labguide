@@ -113,11 +113,9 @@
     <a class="current" href="./">Lab K106 - Defining Release Strategy with Deployments</a>
     <ul class="subnav">
             
-    <li class="toctree-l3"><a href="#lab-k106-defining-release-strategy-with-deployment">LAB K106 - Defining Release Strategy with  Deployment</a></li>
+    <li class="toctree-l3"><a href="#lab-k106-defining-release-strategy-with-deploymentconfig">LAB K106 - Defining Release Strategy with  deploymentconfig</a></li>
     
         <ul>
-        
-            <li><a class="toctree-l4" href="#scaling-a-deployment">Scaling a deployment</a></li>
         
             <li><a class="toctree-l4" href="#rolling-updates-in-action">Rolling Updates in Action</a></li>
         
@@ -302,37 +300,37 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="lab-k106-defining-release-strategy-with-deployment">LAB K106 - Defining Release Strategy with  Deployment</h1>
-<p>A Deployment is a higher level abstraction which sits on top of replica sets and allows you to manage the way applications are deployed, rolled back at a controlled rate.</p>
-<p>Deployment has mainly two responsibilities,</p>
+                <h1 id="lab-k106-defining-release-strategy-with-deploymentconfig">LAB K106 - Defining Release Strategy with  deploymentconfig</h1>
+<p>A deploymentconfig is a higher level abstraction which sits on top of replica sets and allows you to manage the way applications are deployed, rolled back at a controlled rate.</p>
+<p>deploymentconfig has mainly three responsibilities,</p>
 <ul>
-<li>Provide Fault Tolerance: Maintain the number of replicas for a type of service/app. Schedule/delete pods to meet the desired count.</li>
+<li>Availability: Maintain the number of replicas for a type of service/app.</li>
+<li>Scalability: Schedule/delete pods to meet the desired count.</li>
 <li>Update Strategy: Define a release strategy and update the pods accordingly.</li>
 </ul>
-<pre><code>/k8s-code/projects/instavote/dev/
-cp vote-rs.yaml vote-deploy.yaml
+<pre><code>cd projects/instavote/dev/
+cp vote-rc.yaml vote-dc.yaml
 </code></pre>
 
-<p>Deployment spec (deployment.spec) contains everything that replica set has + strategy. Lets add it as follows,</p>
-<p><code>file: vote-deploy.yaml</code></p>
-<pre><code>apiVersion: apps/v1
-kind: Deployment
+<p>deploymentconfig spec (deploymentconfig.spec) contains everything that replica set has + strategy. Lets add it as follows,</p>
+<p><code>file: vote-dc.yaml</code></p>
+<pre><code>apiVersion: apps.openshift.io/v1
+kind: deploymentConfig
 metadata:
   name: vote
 spec:
+  minReadySeconds: 20
+  replicas: 12
+  selector:
+    role: vote
   strategy:
-    type: RollingUpdate
-    rollingUpdate:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 120
       maxSurge: 2
       maxUnavailable: 1
-  revisionHistoryLimit: 4
-  replicas: 12
-  minReadySeconds: 20
-  selector:
-    matchLabels:
-      role: vote
-    matchExpressions:
-      - {key: version, operator: In, values: [v1, v2, v3, v4, v5]}
   template:
     metadata:
       name: vote
@@ -343,7 +341,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: schoolofdevops/vote:v1
+          image: initcron/oc-vote:v1
           resources:
             requests:
               memory: &quot;64Mi&quot;
@@ -354,51 +352,31 @@ spec:
 </code></pre>
 
 <p>This time, start monitoring with --show-labels options added.</p>
-<pre><code>watch -n 1 kubectl get  pod,deploy,rs,svc --show-labels
+<pre><code>watch -n 1 oc get  dc,rc,pods --show-labels
 </code></pre>
 
-<p>Lets  create the Deployment. Do monitor the labels of the pod while applying this.</p>
-<pre><code>kubectl apply -f vote-deploy.yaml
+<p>Lets  create the deploymentconfig. Do monitor the labels of the pod while applying this.</p>
+<pre><code>oc apply -f vote-dc.yaml
 </code></pre>
 
-<p>Observe the chances to pod labels, specifically the <strong>pod-template-hash</strong>.</p>
-<p>Now that the deployment is created. To validate,</p>
-<pre><code>kubectl get deployment
-kubectl get rs --show-labels
-kubectl get deploy,pods,rs
-kubectl rollout status deployment/vote
-kubectl get pods --show-labels
+<p>Now that the deploymentconfig is created. To validate,</p>
+<pre><code>oc get dc
+oc get rc --show-labels
+oc get deploy,pods,rc
+oc rollout status dc  vote
+oc get pods --show-labels
+oc get endpoints
 </code></pre>
 
 <p>Sample Output</p>
-<pre><code>kubectl get deployments
+<pre><code>oc get dc
 NAME       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 vote   3         3         3            1           3m
 </code></pre>
 
-<h2 id="scaling-a-deployment">Scaling a deployment</h2>
-<p>To scale a deployment in Kubernetes:</p>
-<pre><code>kubectl scale deployment/vote --replicas=15
-
-kubectl rollout status deployment/vote
-
-</code></pre>
-
-<p>Sample output:</p>
-<pre><code>
-Waiting for rollout to finish: 5 of 15 updated replicas are available...
-Waiting for rollout to finish: 6 of 15 updated replicas are available...
-deployment &quot;vote&quot; successfully rolled out
-</code></pre>
-
-<p>You could also update the deployment by editing it.</p>
-<pre><code>kubectl edit deploy/vote
-</code></pre>
-
-<p>[change replicas to 8 from the editor, save and observe]</p>
 <h2 id="rolling-updates-in-action">Rolling Updates in Action</h2>
-<p>Now, update the deployment spec to apply</p>
-<p>file: vote-deploy.yaml</p>
+<p>Now, update the deploymentconfig spec to apply</p>
+<p>file: vote-dc.yaml</p>
 <pre><code>
 ...
 template:
@@ -413,22 +391,22 @@ template:
 </code></pre>
 
 <p>apply</p>
-<pre><code>kubectl apply -f vote-deploy.yaml
+<pre><code>oc apply -f vote-dc.yaml
 
-kubectl rollout status deployment/vote
+oc rollout status deploymentconfig/vote
 </code></pre>
 
 <p>Observe rollout status and monitoring screen.</p>
 <pre><code>
-kubectl rollout history deploy/vote
+oc rollout history deploy/vote
 
-kubectl rollout history deploy/vote --revision=1
+oc rollout history deploy/vote --revision=1
 
 </code></pre>
 
 <p>Try updating the version of the image from v2 to v3,v4,v5. Repeat a few times to observe how it rolls out a new version.  </p>
 <h2 id="undo-and-rollback">Undo and Rollback</h2>
-<p>file: vote-deploy.yaml</p>
+<p>file: vote-dc.yaml</p>
 <pre><code>spec:
   containers:
     - name: app
@@ -437,19 +415,19 @@ kubectl rollout history deploy/vote --revision=1
 </code></pre>
 
 <p>apply</p>
-<pre><code>kubectl apply -f vote-deploy.yaml
+<pre><code>oc apply -f vote-dc.yaml
 
-kubectl rollout status
+oc rollout status
 
-kubectl rollout history deploy/vote
+oc rollout history deploy/vote
 
-kubectl rollout history deploy/vote --revision=xx
+oc rollout history deploy/vote --revision=xx
 </code></pre>
 
 <p>where replace xxx with revisions</p>
 <p>Find out the previous revision with sane configs.</p>
 <p>To undo to a sane version (for example revision 3)</p>
-<pre><code>kubectl rollout undo deploy/vote --to-revision=2
+<pre><code>oc rollout undo deploy/vote --to-revision=2
 </code></pre>
               
             </div>

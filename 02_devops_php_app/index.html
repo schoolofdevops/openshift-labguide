@@ -113,7 +113,7 @@
     
         <ul>
         
-            <li><a class="toctree-l4" href="#openshift-commandline">OpenShift CommandLine</a></li>
+            <li><a class="toctree-l4" href="#working-with-openshift-cli">Working with OpenShift CLI</a></li>
         
         </ul>
     
@@ -357,28 +357,36 @@ configuration</p>
 <p>Then click create project. After create project automated build build your project .
  In the web console, view the Overview page for your project to determine the web address for your application. Click the web address displayed right side web console open this link on new tab.</p>
 <p><img alt="project" src="../images/php10.png" /></p>
-<h3 id="openshift-commandline">OpenShift CommandLine</h3>
-<p>```
- oc get pods</p>
-<p><code>[output]</code>
- NAME                READY     STATUS      RESTARTS   AGE
+<h3 id="working-with-openshift-cli">Working with OpenShift CLI</h3>
+<pre><code> oc get pods
+</code></pre>
+
+<p>[output]</p>
+<pre><code> NAME                READY     STATUS      RESTARTS   AGE
 front-end-1-build   0/1       Completed   0          22m
 front-end-1-x59fd   1/1       Running     0          21m
- ```</p>
-<p>getting all replicas
- <code>oc get rc</code>
- [output]
- <code>NAME          DESIRED   CURRENT   READY     AGE
-front-end-1   1         1         1         22m</code></p>
+</code></pre>
+
+<p>getting all replicas</p>
+<pre><code> oc get rc
+</code></pre>
+
+<p>[output]</p>
+<pre><code> NAME          DESIRED   CURRENT   READY     AGE
+front-end-1   1         1         1         22m
+</code></pre>
+
 <p>getting all services</p>
 <pre><code> oc get svc
 </code></pre>
 
-<p>[output]
- <code>NAME        TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
-front-end   ClusterIP   172.30.25.85   &lt;none&gt;        8080/TCP,8443/TCP   24m</code>
- describe front-end services</p>
-<p><code>oc describe svc front-end
+<p>[output]</p>
+<pre><code> NAME        TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
+front-end   ClusterIP   172.30.25.85   &lt;none&gt;        8080/TCP,8443/TCP   24m
+</code></pre>
+
+<p>describe front-end services</p>
+<pre><code> oc describe svc front-end
 Name:              front-end
 Namespace:         devops-demo-app
 Labels:            app=front-end
@@ -393,10 +401,14 @@ Port:              8443-tcp  8443/TCP
 TargetPort:        8443/TCP
 Endpoints:         172.17.0.8:8443
 Session Affinity:  None
-Events:            &lt;none&gt;</code></p>
-<p>getting deploymentconfig
- <code>oc get dc</code>
-[output]</p>
+Events:            &lt;none&gt;
+</code></pre>
+
+<p>getting deploymentconfig</p>
+<pre><code> oc get dc
+</code></pre>
+
+<p>[output]</p>
 <pre><code>NAME        REVISION   DESIRED   CURRENT   TRIGGERED BY
 front-end   1          1         1         config,image(front-end:latest)\
 
