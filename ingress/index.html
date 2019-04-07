@@ -132,7 +132,7 @@
     <a class="current" href="./">Lab OC105 - Application Routing with Ingress Controllers</a>
     <ul class="subnav">
             
-    <li class="toctree-l3"><a href="#lab-k201-application-routing-with-ingress-controllers">Lab K201 - Application Routing with Ingress Controllers</a></li>
+    <li class="toctree-l3"><a href="#adding-openshift-routes">Adding Openshift Routes</a></li>
     
         <ul>
         
@@ -305,145 +305,77 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="lab-k201-application-routing-with-ingress-controllers">Lab K201 - Application Routing with Ingress Controllers</h1>
+                <h1 id="adding-openshift-routes">Adding Openshift Routes</h1>
 <h2 id="pre-requisites">Pre Requisites</h2>
 <ul>
-<li>Ingress controller such as Nginx, Trafeik needs to be deployed before creating ingress resources.</li>
-<li>On GCE, ingress controller runs on the master. On all other installations, it needs to be deployed, either as a deployment, or a daemonset. In addition, a service needs to be created for ingress.</li>
-<li>Daemonset will run ingress on each node. Deployment will just create a highly available setup, which can then be exposed on specific nodes using ExternalIPs configuration in the service.</li>
+<li>Openshift configured with Router</li>
 </ul>
-<h3 id="create-a-ingress-controller">Create a Ingress Controller</h3>
-<p>An ingress controller needs to be created in order to serve the ingress requests. Kubernetes comes with support for <strong>GCE</strong> and <strong>nginx</strong> ingress controllers, however additional softwares are commonly used too.  As part of this implementation you are going to use <a href="https://traefik.io/">Traefik</a> as the ingress controller. Its a fast and lightweight ingress controller and also comes with great documentation and support.  </p>
-<pre><code class="bash">
-
-+----+----+--+            
-| ingress    |            
-| controller |            
-+----+-------+            
-
-
-</code></pre>
-
-<p>There are commonly two ways you could deploy an ingress</p>
-<ul>
-<li>Using Deployments with HA setup</li>
-<li>Using DaemonSets which run on every node</li>
-</ul>
-<p>We pick <strong>DaemonSet</strong>, which will ensure that one instance of <strong>traefik</strong> is run on every node.  Also, we use a specific configuration <strong>hostNetwork</strong> so that the pod running <strong>traefik</strong> attaches to the network of underlying host, and not go through <strong>kube-proxy</strong>. This would avoid extra network hop and increase performance  a bit.  </p>
-<p>You could refer to <a href="https://docs.traefik.io/user-guide/kubernetes/">official traefik docs</a> to understand the installation options and how to use those.</p>
-<p>Deploy ingress controller with daemonset as</p>
-<pre><code>
-cd k8s-code/ingress/traefik
-kubectl apply -f traefik-rbac.yaml
-kubectl apply -f traefik-ds.yaml
-</code></pre>
-
-<p>Validate</p>
-<pre><code>kubectl get svc,ds,pods -n kube-system  --selector='k8s-app=traefik-ingress-lb'
-</code></pre>
-
-<p>[output]</p>
-<pre><code>NAME                              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)           AGE
-service/traefik-ingress-service   ClusterIP   10.109.182.203   &lt;none&gt;        80/TCP,8080/TCP   11h
-
-NAME                                              DESIRED   CURRENT   READY     UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
-daemonset.extensions/traefik-ingress-controller   2         2         2         2            2           &lt;none&gt;          11h
-
-NAME                                   READY     STATUS    RESTARTS   AGE
-pod/traefik-ingress-controller-bmwn7   1/1       Running   0          11h
-pod/traefik-ingress-controller-vl296   1/1       Running   0          11h
-</code></pre>
-
-<p>You would notice that the ingress controller is started on all nodes (except managers). Visit any of the nodes 8080 port e.g. http://IPADDRESS:8080 to see  traefik's management UI.</p>
-<p><img alt="Traefik" src="../images/traefik01.png" /></p>
 <h3 id="setting-up-named-based-routing-for-vote-app">Setting up Named Based Routing for Vote App</h3>
-<p>We will direct all our request to the ingress controller now, but with differnt hostname e.g. <strong>vote.example.com</strong> or <strong>results.example.com</strong>. And it should direct to the correct service based on the host name.</p>
-<p>In order to achieve this you, as a user would create a <strong>ingress</strong> object with a set of rules,</p>
+<p>We will direct all our request to the route controller now, but with differnt hostname e.g. <strong>vote.example.com</strong> or <strong>results.example.com</strong>. And it should direct to the correct service based on the host name.</p>
+<p>In order to achieve this you, as a user would create a <strong>route</strong> object with a set of rules,</p>
 <pre><code class="bash">
 
 +----+----+--+            
-| ingress    |            
-| controller |            
+| router     |            
+|            |            
 +----+-------+            
      |              +-----+----+
-     +---watch----&gt; | ingress  | &lt;------- user
+     +---watch----&gt; | route    | &lt;------- user
                     +----------+
 
 </code></pre>
 
-<p><code>file: vote-ing.yaml</code></p>
-<pre><code>apiVersion: extensions/v1beta1
-kind: Ingress
+<p><code>file: vote-route.yaml</code></p>
+<pre><code>apiVersion: v1
+kind: Route
 metadata:
   name: vote
-  annotations:
-    kubernetes.io/ingress.class: traefik
 spec:
-  rules:
-    - host: vote.example.com
-      http:
-        paths:
-          - path: /
-            backend:
-              serviceName: vote
-              servicePort: 80
-    - host: results.example.com
-      http:
-        paths:
-          - path: /
-            backend:
-              serviceName: results
-              servicePort: 80
+  host: vote.example.com
+  path: &quot;/&quot;
+  to:
+    kind: Service
+    name: vote
 </code></pre>
 
 <p>And apply</p>
-<pre><code>kubectl get ing
-kubectl apply -f vote-ing.yaml --dry-run
-kubectl apply -f vote-ing.yaml
+<pre><code>oc get routes
+oc apply -f vote-route.yaml --dry-run
+oc apply -f vote-route.yaml
+oc get routes
 </code></pre>
 
-<p>Since the ingress controller  is constantly monitoring for the ingress objects, the moment it detects, it connects with traefik and creates a rule as follows.</p>
+<p>Since the router   is constantly monitoring for the route objects, the moment it detects, it connects with traefik and creates a rule as follows.</p>
 <pre><code class="bash">
-                    +----------+
-     +--create----&gt; | traefik  |
-     |              |  rules   |
-     |              +----------+
+                    +------------+
+     +--create----&gt; | router     |
+     |              |  configs   |
+     |              +------------+
 +----+----+--+            ^
-| ingress    |            :
+| route      |            :
 | controller |            :
 +----+-------+            :
      |              +-----+----+
-     +---watch----&gt; | ingress  | &lt;------- user
+     +---watch----&gt; | route    | &lt;------- user
                     +----------+
 
 </code></pre>
 
 <p>where,</p>
 <ul>
-<li>A user creates a ingress object with the rules. This could be a named based or a path based routing.</li>
-<li>An ingress controller, in this example traefik constantly monitors for ingress objects. The moment it detects one, it creates a rule and adds it to the traefik load balancer. This rule maps to the ingress specs.</li>
-</ul>
-<p>You could now see the rule added to ingress controller,</p>
-<p><img alt="Traefik with Ingress Rules" src="../images/traefik02.png" /></p>
-<p>Where,</p>
-<ul>
-<li>
-<p><strong>vote.example.com</strong> and <strong>results.example.com</strong> are added as frontends. These frontends point to respective services <strong>vote</strong> and <strong>results</strong>.</p>
-</li>
-<li>
-<p>respective backends also appear on the right hand side of the screen, mapping to each of the service.</p>
-</li>
+<li>A user creates a route object with the rules. This could be a named based or a path based routing.</li>
+<li>An route controller constantly monitors for route objects. The moment it detects one, it creates a rule and adds it to the traefik load balancer. This rule maps to the route specs.</li>
 </ul>
 <h4 id="adding-local-dns">Adding Local DNS</h4>
-<p>You have created the ingress rules based on hostnames e.g.  <strong>vote.example.com</strong> and <strong>results.example.com</strong>. In order for you to be able to access those, there has to be a dns entry pointing to your nodes, which are running traefik.</p>
+<p>You have created the route rules based on hostnames e.g.  <strong>vote.example.com</strong>. In order for you to be able to access those, there has to be a dns entry pointing to your nodes, which are running traefik.</p>
 <pre><code class="bash">
-  vote.example.com     -------+                        +----- vote:81
+  vote.example.com     -------+                        +----- vote:80
                               |     +-------------+    |
-                              |     |   ingress   |    |
+                              |     |   route     |    |
                               +===&gt; |   node:80   | ===+
                               |     +-------------+    |
                               |                        |
-  results.example.com  -------+                        +----- results:82
+  results.example.com  -------+                        +----- results:80
 
 </code></pre>
 
@@ -457,7 +389,7 @@ kubectl apply -f vote-ing.yaml
 </code></pre>
 
 <p>And add an entry such as ,</p>
-<pre><code>xxx.xxx.xxx.xxx vote.example.com results.example.com
+<pre><code>xxx.xxx.xxx.xxx vote.example.com
 </code></pre>
 
 <p>where,</p>
@@ -466,95 +398,26 @@ kubectl apply -f vote-ing.yaml
 </ul>
 <p>And then access the app urls using http://vote.example.com or http://results.example.com</p>
 <p><img alt="Name Based Routing" src="../images/domain-name.png" /></p>
-<h3 id="adding-http-authentication-with-annotations">Adding HTTP Authentication with Annotations</h3>
-<h4 id="creating-htpasswd-spec-as-secret">Creating htpasswd spec as Secret</h4>
-<pre><code>apt install -yq apache2-utils
-htpasswd -c auth devops
-</code></pre>
-
-<p>Or use <a href="http://www.htaccesstools.com/htpasswd-generator/">Online htpasswd generator</a> to generate a htpasswd spec. if you use the online generator, copy the contents to a file by name <code>auth</code> in the current directory.</p>
-<p>Then generate the secret as,</p>
-<pre><code>kubectl create secret generic mysecret --from-file auth
-
-kubectl get secret
-
-kubectl describe secret mysecret
-</code></pre>
-
-<p>And then add annotations to the ingress object so that it is read by the ingress controller to update configurations.</p>
-<p><code>file: vote-ing.yaml</code></p>
-<pre><code>apiVersion: extensions/v1beta1
-kind: Ingress
+<h3 id="adding-tlsssl-certificates">Adding TLS/SSL Certificates</h3>
+<p><code>file: vote-route.yaml</code></p>
+<pre><code>apiVersion: v1
+kind: Route
 metadata:
   name: vote
-  annotations:
-    kubernetes.io/ingress.class: traefik
-    ingress.kubernetes.io/auth-type: &quot;basic&quot;
-    ingress.kubernetes.io/auth-secret: &quot;mysecret&quot;
 spec:
-  rules:
-    - host: vote.example.com
-      http:
-        paths:
-          - path: /
-            backend:
-              serviceName: vote
-              servicePort: 82
-    - host: results.example.com
-      http:
-        paths:
-          - path: /
-            backend:
-              serviceName: results
-              servicePort: 81
-
+  host: vote.example.com
+  path: &quot;/&quot;
+  to:
+    kind: Service
+    name: vote
+  tls:
+    termination: edge
 </code></pre>
 
-<p>where,</p>
-<ul>
-<li><em>ingress.kubernetes.io/auth-type: "basic"</em> defines authentication type that needs to be added.</li>
-<li><em>ingress.kubernetes.io/auth-secret: "mysecret"</em> refers to the secret created earlier.</li>
-</ul>
 <p>apply</p>
-<pre><code>kubectl apply -f vote-ing.yaml
-kubectl get ing/vote -o yaml
+<pre><code>oc apply -f vote-route.yaml
+oc get route/vote -o yaml
 </code></pre>
-
-<p>Observe the annotations field. No sooner than you apply this spec, ingress controller reads the event and a basic http authentication is set with the secret you added.</p>
-<pre><code class="bash">
-                      +----------+
-       +--update----&gt; | traefik  |
-       |              |  configs |
-       |              +----------+
-  +----+----+--+            ^
-  | ingress    |            :
-  | controller |            :
-  +----+-------+            :
-       |              +-----+-------+
-       +---watch----&gt; | ingress     | &lt;------- user
-                      | annotations |
-                      +-------------+
-</code></pre>
-
-<p>And if you visit traefik's dashboard and go to the details tab, you should see the basic authentication section enabled as in the diagram below.</p>
-<p><img alt="Name Based Routing" src="../images/domain-name.png" /></p>
-<h5 id="reading">Reading</h5>
-<ul>
-<li><a href="https://docs.traefik.io/user-guide/kubernetes/">Trafeik's Guide to Kubernetes Ingress Controller</a></li>
-<li><a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/">Annotations</a></li>
-<li><a href="https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/">DaemonSets</a></li>
-</ul>
-<p><strong>References</strong></p>
-<ul>
-<li><a href="http://www.htaccesstools.com/htpasswd-generator/">Online htpasswd generator</a></li>
-</ul>
-<p><strong>Keywords</strong></p>
-<ul>
-<li>trafeik on kubernetes</li>
-<li>kubernetes ingress</li>
-<li>kubernetes annotations</li>
-<li>daemonsets</li>
-</ul>
               
             </div>
           </div>
