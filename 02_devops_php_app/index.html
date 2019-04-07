@@ -111,6 +111,12 @@
             
     <li class="toctree-l3"><a href="#deploying-devops-demo-php-application-for-github-repo">Deploying Devops Demo PHP Application for GitHub Repo</a></li>
     
+        <ul>
+        
+            <li><a class="toctree-l4" href="#openshift-commandline">OpenShift CommandLine</a></li>
+        
+        </ul>
+    
 
     </ul>
                 </li>
@@ -351,53 +357,28 @@ configuration</p>
 <p>Then click create project. After create project automated build build your project .
  In the web console, view the Overview page for your project to determine the web address for your application. Click the web address displayed right side web console open this link on new tab.</p>
 <p><img alt="project" src="../images/php10.png" /></p>
-<p>### OpenShift CommandLine
- When we are using OpenShift many of the tasks that you need to do can be performed through the OpenShift web Broser console or directly using the oc command line tool. or you can observe here backed utility.</p>
-<p>In this case we need the OpenShift token . we can create token using opnshift web console click on user Devloper and there is option copy login command click on this paste on your console.</p>
-<p><img alt="project" src="../images/php7.png" /></p>
-<p><code>oc login https://128.199.213.193:8443 --token=&lt; your token&gt;</code>
- [output]
- <code>Logged into "https://128.199.213.193:8443" as "developer" using the token provided.
-You have access to the following projects and can switch between them with 'oc project &lt;projectname&gt;':
-    devops-demo-app
-  * myproject
-Using project "myproject".</code>
- here display your all the project with the curent project namespace.
-you can swaitch your project namespace using following Command</p>
-<pre><code>oc project devops-demo-app
-</code></pre>
-
-<p>[output]</p>
-<pre><code>Now using project &quot;devops-demo-app&quot; on server &quot;https://128.199.213.193:8443&quot;.
-</code></pre>
-
-<p>see the all contexts use following Command</p>
-<pre><code>oc config get-contexts
-</code></pre>
-
-<p>[output]
- <code>CURRENT   NAME                                        CLUSTER                AUTHINFO                            NAMESPACE
-          /128-199-213-193:8443/developer             128-199-213-193:8443   developer/128-199-213-193:8443      
-          default/128-199-213-193:8443/system:admin   128-199-213-193:8443   system:admin/128-199-213-193:8443   default
-*         myproject/128-199-213-193:8443/developer    128-199-213-193:8443   developer/128-199-213-193:8443      myproject</code>
- getting the pods here you can use pods or only po
- <code>oc get pods</code>
- [output]
- <code>NAME                READY     STATUS      RESTARTS   AGE
+<h3 id="openshift-commandline">OpenShift CommandLine</h3>
+<p>```
+ oc get pods</p>
+<p><code>[output]</code>
+ NAME                READY     STATUS      RESTARTS   AGE
 front-end-1-build   0/1       Completed   0          22m
-front-end-1-x59fd   1/1       Running     0          21m</code>
- getting all replicas
+front-end-1-x59fd   1/1       Running     0          21m
+ ```</p>
+<p>getting all replicas
  <code>oc get rc</code>
  [output]
  <code>NAME          DESIRED   CURRENT   READY     AGE
-front-end-1   1         1         1         22m</code>
- getting all services
- <code>oc get svc</code>
- [output]
+front-end-1   1         1         1         22m</code></p>
+<p>getting all services</p>
+<pre><code> oc get svc
+</code></pre>
+
+<p>[output]
  <code>NAME        TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
 front-end   ClusterIP   172.30.25.85   &lt;none&gt;        8080/TCP,8443/TCP   24m</code>
- describe front-end services
- <code>oc describe svc front-end
+ describe front-end services</p>
+<p><code>oc describe svc front-end
 Name:              front-end
 Namespace:         devops-demo-app
 Labels:            app=front-end
@@ -412,9 +393,9 @@ Port:              8443-tcp  8443/TCP
 TargetPort:        8443/TCP
 Endpoints:         172.17.0.8:8443
 Session Affinity:  None
-Events:            &lt;none&gt;</code>
- getting deploymentconfig
- <code>oc get deploymentconfig</code>
+Events:            &lt;none&gt;</code></p>
+<p>getting deploymentconfig
+ <code>oc get dc</code>
 [output]</p>
 <pre><code>NAME        REVISION   DESIRED   CURRENT   TRIGGERED BY
 front-end   1          1         1         config,image(front-end:latest)\
