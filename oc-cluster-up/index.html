@@ -113,13 +113,6 @@
         
             <li><a class="toctree-l4" href="#install-openshift">Install Openshift</a></li>
         
-        </ul>
-    
-
-    <li class="toctree-l3"><a href="#from-web-use-httpsdemo-02schoolofdevopsorg8443console-login-with-user-developer-any-password">from web use https://demo-02.schoolofdevops.org:8443/console (login with user developer, any password)</a></li>
-    
-        <ul>
-        
             <li><a class="toctree-l4" href="#create-and-switch-to-a-new-project">Create and switch to a new Project</a></li>
         
         </ul>
@@ -346,8 +339,11 @@ oc cluster up --public-hostname=demo-02.schoolofdevops.org
 
 </code></pre>
 
-<h1 id="from-web-use-httpsdemo-02schoolofdevopsorg8443console-login-with-user-developer-any-password">from web use https://demo-02.schoolofdevops.org:8443/console (login with user developer, any password)</h1>
-<p>oc login -u system:admin</p>
+<p>from web use https://HOST:8443/console (login with user developer, any password)</p>
+<p>To login using console </p>
+<pre><code>oc login -u system:admin
+</code></pre>
+
 <h3 id="create-and-switch-to-a-new-project">Create and switch to a new Project</h3>
 <pre><code>oc login -u developer
 
