@@ -1,0 +1,49 @@
+site_name: Kubernetes Lab Guide
+pages:
+  - Home: "index.md"
+  - Just Enough Docker:
+     - Lab D101 - Operating Containers: "operating-containers.md"
+     - Lab D102 - Building and Publishing Docker Images: "dockerizing-voteapp.md"
+     - Lab D103 - Docker Networking: "docker-networking.md"
+     - Lab D104 - Docker Volumes: "docker-volumes.md"
+  - Kubernetes Fundamentals:
+     - Lab K101 - Setup Kubernetes Cluster: "3_install_kubernetes.md"
+     - Lab K102 - Kubernetes Quickdive: "quickdive.md"
+     - Lab K103 - Kubernetes LaunchPods: "5-vote-deploying_pods.md"
+     - Lab K104 - Adding HA and Scalability with ReplicaSets: "replication.md"
+     - Lab K105 - Load Balancing and Service Discovery with Services: "7-vote-exposing_app_with_service.md"
+     - Lab K106 - Defining Release Strategy with Deployments: "6-vote-kubernetes_deployment.md"
+     - Mini Project: "11_deploying_sample_app.md"
+     - Lab K107 - Configurations Management with ConfigMaps: "9-vote-configmaps_and_secrets.md"
+     - Lab K108 - Peristent Volumes: "vote-persistent-volumes.md"
+  - Advanced Administration:
+     - Lab K201 - Application Routing with Ingress Controllers : "ingress.md"
+     - Lab K202 - Authentication and Authorization (RBAC): "configuring_authentication_and_authorization.md"
+     - Lab K203 - Advanced Pod Scheduling: "advanced_pod_scheduling.md"
+     - Lab K204 - Adding health checks with Probes: "pods-health-probes.md"
+     - Lab K205 - Monitoring setup with HELM: "helm.md"
+     - Lab K206 - Auto Scaling Capacity with HPA : "10_kubernetes_autoscaling.md"
+     - Lab K207 - Access Control with Network Policies: "network_policies.md"
+     - Lab K208 - Cluster Administration: "cluster-administration.md"
+  - Additional Topics:
+     - Creating Replicated Redis Cluster with Statefulsets: "13_redis_statefulset.md"
+     - Building Deployment Strategies: "vote-deployement_strategies.md"
+     - Troubleshooting Tips: "12_troubleshooting.md"
+     - Logging: "logging.md"
+  - Exercises:
+     - XER001 - Pods: "xer-001-pods.md"
+     - XER002 - ReplicaSets: "xer-002-rs.md"
+  - Web Quests:
+     - KWQ001 - CNI Web Quest: "wq001-cni.md"
+     - KWQ001 - Kubernetes Security Web Quest: "wq002-security.md"
+     - KWQ003 - Ingress Web Quest: "wq003-ingress.md"
+     - KWQ004 - Monitoring Web Quest: "wq004-monitoring.md"
+     - KWQ005 - Controllers Web Quest: "wq005-controllers.md"
+     - KWQ006 - Persistent Data Web Quest: "wq006-persistentvolume.md"
+     - KWQ007 - Cluster Maintenance Web Quest: "wq007-maintenance.md"
+  - References:
+     - RBAC apiGroups to Resource Mapping: "rbac-resource-group-mapping.md"
+docs_dir: chapters
+theme: readthedocs
+plugins:
+    - search
