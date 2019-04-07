@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Lab K105 - Load Balancing and Service Discovery with Services - Kubernetes Lab Guide</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Lab K105 - Load Balancing and Service Discovery with Services";
+    var mkdocs_page_input_path = "7-vote-exposing_app_with_service.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Kubernetes Lab Guide</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Just Enough Docker</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../operating-containers/">Lab D101 - Operating Containers</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../dockerizing-voteapp/">Lab D102 - Building and Publishing Docker Images</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../docker-networking/">Lab D103 - Docker Networking</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../docker-volumes/">Lab D104 - Docker Volumes</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Kubernetes Fundamentals</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../3_install_kubernetes/">Lab K101 - Setup Kubernetes Cluster</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../quickdive/">Lab K102 - Kubernetes Quickdive</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../5-vote-deploying_pods/">Lab K103 - Kubernetes LaunchPods</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../replication/">Lab K104 - Adding HA and Scalability with Replication Controllers</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">Lab K105 - Load Balancing and Service Discovery with Services</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#lab-k105-load-balancing-and-service-discovery-with-services">LAB K105 - Load Balancing and Service Discovery with Services</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#publishing-external-facing-app-with-nodeport">Publishing external facing app with NodePort</a></li>
+        
+            <li><a class="toctree-l4" href="#exposing-app-with-externalip">Exposing app with ExternalIP</a></li>
+        
+            <li><a class="toctree-l4" href="#internal-service-discovery">Internal Service Discovery</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../6-vote-kubernetes_deployment/">Lab K106 - Defining Release Strategy with Deployments</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../9-vote-configmaps_and_secrets/">Lab K107 - Configurations Management with ConfigMaps</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../vote-persistent-volumes/">Lab K108 - Peristent Volumes</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Advanced Administration</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../ingress/">Lab K201 - Application Routing with Ingress Controllers</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../configuring_authentication_and_authorization/">Lab K202 - Authentication and Authorization (RBAC)</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../advanced_pod_scheduling/">Lab K203 - Advanced Pod Scheduling</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../pods-health-probes/">Lab K204 - Adding health checks with Probes</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../helm/">Lab K205 - Monitoring setup with HELM</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../10_kubernetes_autoscaling/">Lab K206 - Auto Scaling Capacity with HPA</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../network_policies/">Lab K207 - Access Control with Network Policies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../cluster-administration/">Lab K208 - Cluster Administration</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Additional Topics</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../13_redis_statefulset/">Creating Replicated Redis Cluster with Statefulsets</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../vote-deployement_strategies/">Building Deployment Strategies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../logging/">Logging</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Exercises</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../xer-001-pods/">XER001 - Pods</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../xer-002-rs/">XER002 - ReplicaSets</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Web Quests</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../wq001-cni/">KWQ001 - CNI Web Quest</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wq002-security/">KWQ001 - Kubernetes Security Web Quest</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wq003-ingress/">KWQ003 - Ingress Web Quest</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wq004-monitoring/">KWQ004 - Monitoring Web Quest</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wq005-controllers/">KWQ005 - Controllers Web Quest</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wq006-persistentvolume/">KWQ006 - Persistent Data Web Quest</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wq007-maintenance/">KWQ007 - Cluster Maintenance Web Quest</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">References</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../rbac-resource-group-mapping/">RBAC apiGroups to Resource Mapping</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Kubernetes Lab Guide</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Kubernetes Fundamentals &raquo;</li>
+        
+      
+    
+    <li>Lab K105 - Load Balancing and Service Discovery with Services</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="lab-k105-load-balancing-and-service-discovery-with-services">LAB K105 - Load Balancing and Service Discovery with Services</h1>
+<p>In this lab, you would not only publish the application deployed with replication controller earlier, but also learn about the load balancing and service discovery features offered by kubernetes.</p>
+<p>Concepts related to Kubernetes Services are depicted in the following diagram,</p>
+<p><img alt="kubernetes service.\label{fig:captioned_image}" src="../images/k8s_service.jpg" /></p>
+<h3 id="publishing-external-facing-app-with-nodeport">Publishing external facing app with NodePort</h3>
+<p>Kubernetes comes with four types of services viz.</p>
+<ul>
+<li>ClusterIP</li>
+<li>NodePort</li>
+<li>LoadBalancer</li>
+<li>ExternalName</li>
+</ul>
+<p>Lets create a  service of type <strong>NodePort</strong> to understand how it works.</p>
+<p>To check the status of kubernetes objects,</p>
+<pre><code>kubectl get pods,rs,svc
+</code></pre>
+
+<p>You could also start watching the above output for changes. To do so, open a separate terminal window and run,</p>
+<pre><code>watch -n 1 kubectl get  pod,deploy,rs,svc
+</code></pre>
+
+<p>Refer to <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#service-v1-core">Service Specs</a> to understand the properties that you could write.</p>
+<p><code>filename: vote-svc.yaml</code></p>
+<pre><code>---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vote
+  labels:
+    role: vote
+spec:
+  selector:
+    role: vote
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30000
+  type: NodePort
+
+</code></pre>
+
+<p>Apply this file to to create a service</p>
+<pre><code>kubectl apply -f vote-svc.yaml --dry-run
+kubectl apply -f vote-svc.yaml
+kubectl get svc
+kubectl describe service vote
+</code></pre>
+
+<p>[Sample Output of describe command]</p>
+<pre><code>Name:                     vote
+Namespace:                instavote
+Labels:                   role=svc
+                          tier=front
+Annotations:              kubectl.kubernetes.io/last-applied-configuration={&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Service&quot;,&quot;metadata&quot;:{&quot;annotations&quot;:{},&quot;labels&quot;:{&quot;role&quot;:&quot;svc&quot;,&quot;tier&quot;:&quot;front&quot;},&quot;name&quot;:&quot;vote&quot;,&quot;namespace&quot;:&quot;instavote&quot;},&quot;spec&quot;:{...
+Selector:                 app=vote
+Type:                     NodePort
+IP:                       10.108.108.157
+Port:                     &lt;unset&gt;  80/TCP
+TargetPort:               80/TCP
+NodePort:                 &lt;unset&gt;  31429/TCP
+Endpoints:                10.38.0.4:80,10.38.0.5:80,10.38.0.6:80 + 2 more...
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   &lt;none&gt;
+</code></pre>
+
+<p>Observe the following</p>
+<ul>
+<li>Selector</li>
+<li>TargetPort</li>
+<li>NodePort</li>
+<li>Endpoints</li>
+</ul>
+<p>Go to browser and check http://HOSTIP:NODEPORT</p>
+<p>Here the node port is 30000 (as defined by nodePort in service spec).</p>
+<p>Sample output will be:</p>
+<p><img alt="Vote" src="../images/vote-rc.png" /></p>
+<p>If you refresh the page, you should also notice its sending traffic to diffent pod each time, in round robin fashion.</p>
+<h4 id="exercises">Exercises</h4>
+<ul>
+<li>Change the selector criteria to use a non existant label. Use <code>kubectl edit svc./vote</code> to update and apply the configuration. Observe the output of describe command and check the endpoints. Do you see any ?  How are  selectors and pod labels related ?</li>
+<li>Observe the number of endpoints. Then change the scale of replicas created by the replication controllers. Does it have any effect on the number of endpoints ?    </li>
+</ul>
+<h4 id="services-under-the-hood">Services Under the Hood</h4>
+<p>Lets traverse the route of the <strong>network packet</strong> that comes in on port 30000 on any node in your cluster.</p>
+<pre><code>iptables -nvL -t nat  
+iptables -nvL -t nat  | grep 30000
+</code></pre>
+
+<p>Anything that comes on dpt:3000, gets forwarded to the chain created for that service.</p>
+<pre><code>iptables -nvL -t nat  | grep KUBE-SVC-VIQHAVHDK4QE7NA4  -A 10
+
+</code></pre>
+
+<pre><code>Chain KUBE-SVC-VIQHAVHDK4QE7NA4 (2 references)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 KUBE-SEP-RFJGHFMXUDJXIEW6  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* instavote/vote: */ statistic mode random probability 0.20000000019
+    0     0 KUBE-SEP-GBR5YQCVRYY3BA6U  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* instavote/vote: */ statistic mode random probability 0.25000000000
+    0     0 KUBE-SEP-BAI3HQ7SV7RZ2CI6  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* instavote/vote: */ statistic mode random probability 0.33332999982
+    0     0 KUBE-SEP-2EQSLPEP3WDOTI5J  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* instavote/vote: */ statistic mode random probability 0.50000000000
+    0     0 KUBE-SEP-2CJQISP4W7F2HCRW  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* instavote/vote: */
+
+</code></pre>
+
+<p>Where,
+  * counrt of KUBE-SEP-xxx matches number of pods
+  * KUBE-SEP-BAI3HQ7SV7RZ2CI6  is a chain created for one of host. examine that next</p>
+<pre><code>
+
+iptables -nvL -t nat  | grep KUBE-SEP-BAI3HQ7SV7RZ2CI6  -A 3
+</code></pre>
+
+<p>[output]</p>
+<pre><code>pkts bytes target     prot opt in     out     source               destination
+    0     0 KUBE-MARK-MASQ  all  --  *      *       10.32.0.6            0.0.0.0/0            /* instavote/vote: */
+    0     0 DNAT       tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            /* instavote/vote: */ tcp to:10.32.0.6:80
+--
+</code></pre>
+
+<p>where the packet is being forwarded to 10.32.0.6, which should corraborate with the ip of the pod</p>
+<p>e.g.</p>
+<pre><code>kubectl get pods -o wide
+
+NAME         READY     STATUS    RESTARTS   AGE       IP          NODE
+vote-58bpv   1/1       Running   0          1h        10.32.0.6   k-02
+vote-986cl   1/1       Running   0          1h        10.38.0.5   k-03
+vote-9rrfz   1/1       Running   0          1h        10.38.0.4   k-03
+vote-dx8f4   1/1       Running   0          1h        10.32.0.4   k-02
+vote-qxmfl   1/1       Running   0          1h        10.32.0.5   k-02
+</code></pre>
+
+<p>10.32.0.6 matches ip of vote-58bpv  </p>
+<p>to check how the packet is routed next use,</p>
+<pre><code>route -n
+</code></pre>
+
+<p>[output]</p>
+<pre><code>Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         206.189.144.1   0.0.0.0         UG    0      0        0 eth0
+10.15.0.0       0.0.0.0         255.255.0.0     U     0      0        0 eth0
+10.32.0.0       0.0.0.0         255.240.0.0     U     0      0        0 weave
+172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 docker0
+206.189.144.0   0.0.0.0         255.255.240.0   U     0      0        0 eth0
+
+</code></pre>
+
+<p>where, 10.32.0.0 is going over <strong>weave</strong> interface.</p>
+<h3 id="exposing-app-with-externalip">Exposing app with ExternalIP</h3>
+<p>Observe the output of service list, specifically note the <strong>EXTERNAL-IP</strong> colum in the output.</p>
+<pre><code>kubectl  get svc
+</code></pre>
+
+<p>Now, update the service spec and add external IP configs. Pick IP addresses of any two nodes  (You could add one or more) and it to the spec as,</p>
+<pre><code>kubectl edit svc vote
+</code></pre>
+
+<p>[sample file edit]</p>
+<pre><code>---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vote
+  labels:
+    role: vote
+spec:
+  selector:
+    role: vote
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30000
+  type: NodePort
+  externalIPs:
+    - xx.xx.xx.xx
+    - yy.yy.yy.yy
+</code></pre>
+
+<p>Where</p>
+<p>replace xx.xx.xx.xx and yy.yy.yy.yy with IP addresses of the nodes on two of the kubernetes hosts.</p>
+<p>apply</p>
+<pre><code>kubectl  get svc
+kubectl apply -f vote-svc.yaml
+kubectl  get svc
+kubectl describe svc vote
+</code></pre>
+
+<p>[sample output]</p>
+<pre><code>NAME      TYPE       CLUSTER-IP      EXTERNAL-IP                    PORT(S)        AGE
+vote      NodePort   10.107.71.204   206.189.150.190,159.65.8.227   80:30000/TCP   11m
+</code></pre>
+
+<p>where,</p>
+<p>EXTERNAL-IP column shows which IPs the application is been exposed on. You could go to http://<IPADDRESS>:<SERVICE_PORT> to access this application.  e.g. http://206.189.150.190:80 where you should replace 206.189.150.190 with the actual IP address of the node that you exposed this on.</p>
+<h2 id="internal-service-discovery">Internal Service Discovery</h2>
+<p>Kubernetes not only allows you to publish external facing apps with the services, but also allows you to discover other components of your application stack with the clusterIP and DNS attached to it.</p>
+<p>Before you begin adding service discovery,</p>
+<ul>
+<li>Visit the vote app from browser</li>
+<li>Attempt to vote by clicking on one of the options</li>
+</ul>
+<p>observe what happens. Does it go through?  </p>
+<p>Debugging,</p>
+<pre><code>kubectl get pod
+kubectl exec vote-xxxx nslookup redis
+
+</code></pre>
+
+<p>[replace xxxx with the actual pod id of one of the vote pods ]</p>
+<p>keep the above command on a watch. You should create a new terminal to run the watch command.</p>
+<p>e.g.</p>
+<pre><code>kubectl exec -it vote-xxxx sh
+watch  kubectl exec vote-xxxx ping redis
+</code></pre>
+
+<p>where, vote-xxxx is one of the vote pods that I am running. Replace this with the actual pod id.</p>
+<p>Now create <strong>redis</strong> service</p>
+<pre><code>kubectl apply -f redis-svc.yaml
+
+kubectl get svc
+
+kubectl describe svc redis
+</code></pre>
+
+<p>Watch the nslookup screen  and observe if its able to resolve <strong>redis</strong> by hostname and its pointing to an IP address.</p>
+<p>e.g.</p>
+<pre><code>Name:      redis
+Address 1: 10.104.111.173 redis.instavote.svc.cluster.local
+</code></pre>
+
+<p>where</p>
+<ul>
+<li>10.104.111.173 is the ClusterIP assigned to redis service</li>
+<li>redis.instavote.svc.cluster.local is the dns attached to the ClusterIP above</li>
+</ul>
+<p>What happened here?</p>
+<ul>
+<li>Service <strong>redis</strong> was created with a ClusterIP e.g. 10.102.77.6</li>
+<li>A DNS entry was created for this service. The fqdn of the service is <strong>redis.instavote.svc.cluster.local</strong> and it takes the form of
+  my-svc.my-namespace.svc.cluster.local</li>
+<li>Each pod points to  internal  DNS server running in the cluster. You could see the details of this by running the following commands</li>
+</ul>
+<pre><code>kubectl exec vote-xxxx cat /etc/resolv.conf
+</code></pre>
+
+<p>[replace vote-xxxx with actual pod id]</p>
+<p>[sample output]</p>
+<pre><code>nameserver 10.96.0.10
+search instavote.svc.cluster.local svc.cluster.local cluster.local
+options ndots:5
+</code></pre>
+
+<p>where <strong>10.96.0.10</strong> is the ClusterIP assigned to the DNS service. You could co relate that with,</p>
+<pre><code>kubectl get svc -n kube-system
+
+
+NAME                   TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)         AGE
+kube-dns               ClusterIP   10.96.0.10     &lt;none&gt;        53/UDP,53/TCP   1h
+kubernetes-dashboard   NodePort    10.104.42.73   &lt;none&gt;        80:31000/TCP    23m
+
+</code></pre>
+
+<p>where, <strong>10.96.0.10</strong> is the ClusterIP assigned to <strong>kube-dns</strong> and matches the configuration in <strong>/etc/resolv.conf</strong> above.</p>
+<h4 id="creating-endpoints-for-redis">Creating Endpoints for Redis</h4>
+<p>Service is been created, but you still need to launch the actual pods running <strong>redis</strong> application.</p>
+<p>Create the endpoints now,</p>
+<pre><code>kubectl apply -f redis-deploy.yaml
+kubectl describe svc redis
+
+</code></pre>
+
+<p>[sample output]</p>
+<pre><code>Name:              redis
+Namespace:         instavote
+Labels:            role=redis
+                   tier=back
+Annotations:       kubectl.kubernetes.io/last-applied-configuration={&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Service&quot;,&quot;metadata&quot;:{&quot;annotations&quot;:{},&quot;labels&quot;:{&quot;role&quot;:&quot;redis&quot;,&quot;tier&quot;:&quot;back&quot;},&quot;name&quot;:&quot;redis&quot;,&quot;namespace&quot;:&quot;instavote&quot;},&quot;spec&quot;...
+Selector:          app=redis
+Type:              ClusterIP
+IP:                10.102.77.6
+Port:              &lt;unset&gt;  6379/TCP
+TargetPort:        6379/TCP
+Endpoints:         10.32.0.6:6379,10.46.0.6:6379
+Session Affinity:  None
+Events:            &lt;none&gt;
+</code></pre>
+
+<p>Again, visit the vote app from browser, attempt to register your vote.  observe what happens. This time the vote should be registered successfully.</p>
+<h4 id="summary">Summary</h4>
+<p>In this lab, you have published a front facing application, learnt how services are implemented under the hood as well as added service discovery to provide  connection strings automatically.</p>
+<h5 id="reading">Reading</h5>
+<ul>
+<li><a href="https://kubernetes.io/docs/tasks/debug-application-cluster/debug-service/">Debugging Services</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/services-networking/service/">Kubernetes Services Documentation</a></li>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#service-v1-core">Service API Specs for Kubernetes Version 1.10</a></li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../6-vote-kubernetes_deployment/" class="btn btn-neutral float-right" title="Lab K106 - Defining Release Strategy with Deployments">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../replication/" class="btn btn-neutral" title="Lab K104 - Adding HA and Scalability with Replication Controllers"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../replication/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../6-vote-kubernetes_deployment/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>

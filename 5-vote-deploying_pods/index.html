@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Lab K103 - Kubernetes LaunchPods - Kubernetes Lab Guide</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Lab K103 - Kubernetes LaunchPods";
+    var mkdocs_page_input_path = "5-vote-deploying_pods.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Kubernetes Lab Guide</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Just Enough Docker</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../operating-containers/">Lab D101 - Operating Containers</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../dockerizing-voteapp/">Lab D102 - Building and Publishing Docker Images</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../docker-networking/">Lab D103 - Docker Networking</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../docker-volumes/">Lab D104 - Docker Volumes</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Kubernetes Fundamentals</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../3_install_kubernetes/">Lab K101 - Setup Kubernetes Cluster</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../quickdive/">Lab K102 - Kubernetes Quickdive</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">Lab K103 - Kubernetes LaunchPods</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#lab-k103-launching-pods-with-kubernetes">Lab K103: Launching Pods with Kubernetes</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#resource-configs">Resource Configs</a></li>
+        
+            <li><a class="toctree-l4" href="#launching-and-operating-pods">Launching and operating Pods</a></li>
+        
+            <li><a class="toctree-l4" href="#adding-a-volume-for-data-persistence">Adding a Volume for data persistence</a></li>
+        
+            <li><a class="toctree-l4" href="#creating-multi-container-pods">Creating Multi Container Pods</a></li>
+        
+            <li><a class="toctree-l4" href="#adding-resource-requests-and-limits">Adding Resource requests and limits</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../replication/">Lab K104 - Adding HA and Scalability with Replication Controllers</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../7-vote-exposing_app_with_service/">Lab K105 - Load Balancing and Service Discovery with Services</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../6-vote-kubernetes_deployment/">Lab K106 - Defining Release Strategy with Deployments</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../11_deploying_sample_app/">Mini Project</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../9-vote-configmaps_and_secrets/">Lab K107 - Configurations Management with ConfigMaps</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../vote-persistent-volumes/">Lab K108 - Peristent Volumes</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Advanced Administration</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../ingress/">Lab K201 - Application Routing with Ingress Controllers</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../configuring_authentication_and_authorization/">Lab K202 - Authentication and Authorization (RBAC)</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../advanced_pod_scheduling/">Lab K203 - Advanced Pod Scheduling</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../pods-health-probes/">Lab K204 - Adding health checks with Probes</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../helm/">Lab K205 - Monitoring setup with HELM</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../10_kubernetes_autoscaling/">Lab K206 - Auto Scaling Capacity with HPA</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../network_policies/">Lab K207 - Access Control with Network Policies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../cluster-administration/">Lab K208 - Cluster Administration</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Additional Topics</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../13_redis_statefulset/">Creating Replicated Redis Cluster with Statefulsets</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../vote-deployement_strategies/">Building Deployment Strategies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../12_troubleshooting/">Troubleshooting Tips</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../logging/">Logging</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Exercises</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../xer-001-pods/">XER001 - Pods</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../xer-002-rs/">XER002 - ReplicaSets</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Web Quests</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../wq001-cni/">KWQ001 - CNI Web Quest</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wq002-security/">KWQ001 - Kubernetes Security Web Quest</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wq003-ingress/">KWQ003 - Ingress Web Quest</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wq004-monitoring/">KWQ004 - Monitoring Web Quest</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wq005-controllers/">KWQ005 - Controllers Web Quest</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wq006-persistentvolume/">KWQ006 - Persistent Data Web Quest</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../wq007-maintenance/">KWQ007 - Cluster Maintenance Web Quest</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">References</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../rbac-resource-group-mapping/">RBAC apiGroups to Resource Mapping</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Kubernetes Lab Guide</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Kubernetes Fundamentals &raquo;</li>
+        
+      
+    
+    <li>Lab K103 - Kubernetes LaunchPods</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="lab-k103-launching-pods-with-kubernetes">Lab K103: Launching Pods with Kubernetes</h1>
+<p>In this lab, you would learn how to launch applications using  the basic deployment unit of kubernetes i.e. <strong>pods</strong>. This time, you are going to do it by writing declarative configs with <em>yaml</em> syntax.</p>
+<h3 id="resource-configs">Resource Configs</h3>
+<p>Each entity created with kubernetes is a resource including pod, service, deployments, replication controller etc. Resources can be defined as YAML or JSON.  Here is the syntax to create a YAML specification.</p>
+<p><strong>AKMS</strong> =&gt; Resource Configs Specs</p>
+<pre><code>apiVersion: v1
+kind:
+metadata:
+spec:
+</code></pre>
+
+<p>Use this <a href="https://kubernetes.io/docs/reference/">Kubernetes API Reference Document</a> while writing the API specs. This is the most important reference  while working with kubernetes, so its highly advisible that you bookmark it for the version of kubernetes that you use.</p>
+<p>To find the versino of kubernetes use the following command,</p>
+<pre><code>kubectl version -o yaml
+</code></pre>
+
+<p>To list API objects, use the following commands,</p>
+<pre><code>kubectl api-resources
+</code></pre>
+
+<h4 id="writing-pod-spec">Writing Pod Spec</h4>
+<p>Lets now create the  Pod config by adding the kind and specs to schma given in the file vote-pod.yaml as follows.</p>
+<p>Filename: k8s-code/pods/vote-pod.yaml</p>
+<pre><code>apiVersion:
+kind: Pod
+metadata:
+spec:
+</code></pre>
+
+<p>Following are the specs to launch the vote application,</p>
+<ul>
+<li>pod:<ul>
+<li>name: vote</li>
+<li>labels:<ul>
+<li>app: python</li>
+<li>role: vote</li>
+<li>version: v1</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>container<ul>
+<li>name: app</li>
+<li>image: schoolofdevops/vote:v1</li>
+</ul>
+</li>
+</ul>
+<p>Refer to the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#pod-v1-core">Pod Spec</a> find out the relevant properties and add it to the <strong>vote-pod.yaml</strong> provided in the supporting code repo.</p>
+<p><code>Filename: k8s-code/pods/vote-pod.yaml</code></p>
+<pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: vote
+  labels:
+    app: python
+    role: vote
+    version: v1
+spec:
+  containers:
+    - name: app
+      image: schoolofdevops/vote:v1
+</code></pre>
+
+<p><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#pod-v1-core">Use this example link to refer to pod spec</a></p>
+<h3 id="launching-and-operating-pods">Launching and operating Pods</h3>
+<p>To launch a monitoring screen to see whats being launched, use the following command in a new terminal window where kubectl is configured.</p>
+<pre><code>watch -n 1  kubectl get pods,deploy,rs,svc
+
+</code></pre>
+
+<p>kubectl Syntax:</p>
+<pre><code>kubectl
+kubectl apply --help
+kubectl apply -f FILE
+</code></pre>
+
+<p>To <strong>launch</strong> pod using configs above,</p>
+<pre><code>kubectl apply -f vote-pod.yaml
+
+</code></pre>
+
+<p>To <strong>view</strong> pods</p>
+<pre><code>kubectl get pods
+
+kubectl get po -o wide
+
+kubectl get pods vote
+</code></pre>
+
+<p>To get detailed info</p>
+<pre><code>kubectl describe pods vote
+</code></pre>
+
+<p>Commands to  <strong>operate</strong> the pod</p>
+<pre><code>
+kubectl logs vote
+
+kubectl exec -it vote  sh
+
+
+</code></pre>
+
+<p>Run the following commands inside the container in a pod after running exec command as above</p>
+<pre><code>ifconfig
+cat /etc/issue
+hostname
+cat /proc/cpuinfo
+ps aux
+</code></pre>
+
+<p><code>use ^d or exit to log out</code></p>
+<h2 id="adding-a-volume-for-data-persistence">Adding a Volume for data persistence</h2>
+<p>Lets create a pod for database and attach a volume to it. To achieve this we will need to</p>
+<ul>
+<li>create a <strong>volumes</strong> definition</li>
+<li>attach volume to container using <strong>VolumeMounts</strong> property</li>
+</ul>
+<p>Local host volumes are of two types:  </p>
+<ul>
+<li>emptyDir  </li>
+<li>hostPath  </li>
+</ul>
+<p>We will pick hostPath. <a href="https://kubernetes.io/docs/concepts/storage/volumes/#hostpath">Refer to this doc to read more about hostPath.</a></p>
+<p>File: db-pod.yaml</p>
+<pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: db
+  labels:
+    app: postgres
+    role: database
+    tier: back
+spec:
+  containers:
+    - name: db
+      image: postgres:9.4
+      ports:
+        - containerPort: 5432
+      volumeMounts:
+      - name: db-data
+        mountPath: /var/lib/postgresql/data
+  volumes:
+  - name: db-data
+    hostPath:
+      path: /var/lib/pgdata
+      type: DirectoryOrCreate
+</code></pre>
+
+<p>To create this pod,</p>
+<pre><code>kubectl apply -f db-pod.yaml
+
+kubectl describe pod db
+
+kubectl get events
+</code></pre>
+
+<p><strong>Exercise</strong> : Examine <strong>/var/lib/pgdata</strong> on the systems to check if the directory is been created and if the data is present.</p>
+<h2 id="creating-multi-container-pods">Creating Multi Container Pods</h2>
+<p>file: multi_container_pod.yml</p>
+<pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: web
+  labels:
+    tier: front
+    app: nginx
+    role: ui
+spec:
+  containers:
+    - name: nginx
+      image: nginx:stable-alpine
+      ports:
+        - containerPort: 80
+          protocol: TCP
+      volumeMounts:
+        - name: data
+          mountPath: /var/www/html-sample-app
+
+    - name: sync
+      image: schoolofdevops/sync:v2
+      volumeMounts:
+        - name: data
+          mountPath: /var/www/app
+
+  volumes:
+    - name: data
+      emptyDir: {}
+</code></pre>
+
+<p>To create this pod</p>
+<pre><code>kubectl apply -f multi_container_pod.yml
+</code></pre>
+
+<p>Check Status</p>
+<pre><code>root@kube-01:~# kubectl get pods
+NAME      READY     STATUS              RESTARTS   AGE
+nginx     0/2       ContainerCreating   0          7s
+vote      1/1       Running             0          3m
+</code></pre>
+
+<p>Checking logs, logging in</p>
+<pre><code>kubectl logs  web  -c sync
+kubectl logs  web  -c nginx
+
+kubectl exec -it web  sh  -c nginx
+kubectl exec -it web  sh  -c sync
+
+</code></pre>
+
+<p>Observe whats common and whats isolated in two containers running inside  the same pod using the following commands,</p>
+<p>shared</p>
+<pre><code>hostname
+ifconfig
+</code></pre>
+
+<p>isolated</p>
+<pre><code>cat /etc/issue
+ps aux
+df -h
+
+</code></pre>
+
+<h2 id="adding-resource-requests-and-limits">Adding Resource requests and limits</h2>
+<p>We can control the amount of resource requested and also put a limit on the maximum a container in a pod could take up.  This can be done by adding to the existing pod spec as below. Refer to <a href="https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/">official document on resource management</a> here.</p>
+<p><code>Filename: vote-pod.yaml</code></p>
+<pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: vote
+  labels:
+    app: python
+    role: vote
+    version: v1
+spec:
+  containers:
+    - name: app
+      image: schoolofdevops/vote:v1
+      resources:
+        requests:
+          memory: &quot;64Mi&quot;
+          cpu: &quot;50m&quot;
+        limits:
+          memory: &quot;128Mi&quot;
+          cpu: &quot;250m&quot;
+</code></pre>
+
+<p>Lets apply the changes now</p>
+<pre><code>kubectl apply -f vote-pod.yaml
+</code></pre>
+
+<p>If you already have <strong>vote</strong> pod running, you may see an output similar to below,</p>
+<p>[sample output]</p>
+<pre><code>The Pod &quot;vote&quot; is invalid: spec: Forbidden: pod updates may not change fields other than `spec.containers[*].image`, `spec.initContainers[*].image`, `spec.activeDeadlineSeconds` or `spec.tolerations` (only additions to existing tolerations)
+{&quot;Volumes&quot;:[{&quot;Name&quot;:&quot;default-token-snbj4&quot;,&quot;HostPath&quot;:null,&quot;EmptyDir&quot;:null,&quot;GCEPersistentDisk&quot;:null,&quot;AWSElasticBlockStore&quot;:null,&quot;GitRepo&quot;:null,&quot;Secret&quot;:{&quot;SecretName&quot;:&quot;default-token-snbj4&quot;,&quot;Items&quot;:null,&quot;DefaultMode&quot;:420,&quot;Optional&quot;:null},&quot;NFS&quot;:null,&quot;ISCSI&quot;:null,&quot;Glusterfs&quot;:null,&quot;PersistentVolumeClaim&quot;:null,&quot;RBD&quot;:null,&quot;Quobyte&quot;:null,&quot;FlexVolume&quot;:null,&quot;Cinder&quot;:null,&quot;CephFS&quot;:null,&quot;Flocker&quot;:null,&quot;DownwardAPI&quot;:null,&quot;FC&quot;:null,&quot;AzureFile&quot;:null,&quot;ConfigMap&quot;:null,&quot;VsphereVolume&quot;:null,&quot;AzureDisk&quot;:null,&quot;PhotonPersistentDisk&quot;:null,&quot;Projected&quot;:null,&quot;PortworxVolume&quot;:null,&quot;ScaleIO&quot;:null,&quot;StorageOS&quot;:null}],&quot;InitContainers&quot;:null,&quot;Containers&quot;:[{&quot;Name&quot;:&quot;app&quot;,&quot;Image&quot;:&quot;schoolofdevops/vote:v1&quot;,&quot;Command&quot;:null,&quot;Args&quot;:null,&quot;WorkingDir&quot;:&quot;&quot;,&quot;Ports&quot;:null,&quot;EnvFrom&quot;:null,&quot;Env&quot;:null,&quot;Resources&quot;:{&quot;Limits&quot;:
+....
+...
+</code></pre>
+
+<p>From the above output, its clear that not all the fields are mutable(except for a few e.g labels). Container based deployments primarily follow concept of <strong>immutable deployments</strong>. So to bring your change into effect, you need to re create the pod as,</p>
+<pre><code>kubectl delete pod vote
+
+kubectl apply -f vote-pod.yaml
+
+kubectl describe pod vote
+</code></pre>
+
+<p>From the output of the describe command above, you could confirm the resource constraints you added are in place.</p>
+<h4 id="exercise">Exercise</h4>
+<pre><code>* Define the value of **cpu.request** &gt; **cpu.limit** Try to apply and observe.
+* Define the values for **memory.request** and **memory.limit** higher than the total system memory. Apply and observe the deployment and pods.
+</code></pre>
+<h3 id="deleting-pods">Deleting Pods</h3>
+<p>Now that you  are done experimenting with pod, <strong>delete</strong> it with the following command,</p>
+<pre><code>kubectl delete pod vote web db
+
+kubectl get pods
+</code></pre>
+
+<h4 id="reading-list">Reading List</h4>
+<ul>
+<li><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.9/#pod-v1-core">PodSpec:</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/storage/volumes">Managing Volumes with Kubernetes</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/configuration/assign-pod-node">Node Selectors, Affinity</a></li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../replication/" class="btn btn-neutral float-right" title="Lab K104 - Adding HA and Scalability with Replication Controllers">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../quickdive/" class="btn btn-neutral" title="Lab K102 - Kubernetes Quickdive"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../quickdive/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../replication/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>
