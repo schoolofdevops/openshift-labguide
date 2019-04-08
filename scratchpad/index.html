@@ -135,6 +135,10 @@
                     
     <a class="" href="../9-vote-configmaps_and_secrets/">Lab OC106 - Configurations Management with ConfigMaps</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../helm/">Lab OC107 - Monitoring setup with HELM</a>
+                </li>
     </ul>
 	    </li>
           
@@ -153,10 +157,6 @@
                 <li class="">
                     
     <a class="" href="../pods-health-probes/">Lab K204 - Adding health checks with Probes</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../helm/">Lab K205 - Monitoring setup with HELM</a>
                 </li>
                 <li class="">
                     
@@ -289,34 +289,7 @@
           <div role="main">
             <div class="section">
               
-                <p>cat &lt;<EOF >&gt; /etc/docker/daemon.json
-{
-  "insecure-registries" : [
-     "172.30.0.0/16"
-   ]
-}
-EOF</p>
-<p>systemctl status docker
-systemctl restart docker
-systemctl status docker</p>
-<p>cd /root</p>
-<p>wget -c https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-server-v3.11.0-0cbc58b-linux-64bit.tar.gz</p>
-<p>tar -xzf openshift-origin-server-v3.11.0-0cbc58b-linux-64bit.tar.gz</p>
-<p>ln -s /root/openshift-origin-server-v3.11.0-0cbc58b-linux-64bit/oc  /usr/local/bin/</p>
-<p>ln -s  ~/openshift-origin-server-v3.11.0-0cbc58b-linux-64bit/oadm /usr/local/bin/</p>
-<p>oc cluster up --help</p>
-<p>oc cluster up --public-hostname=demo-02.schoolofdevops.org</p>
-<h1 id="from-web-use-httpsdemo-02schoolofdevopsorg8443console-login-with-user-developer-any-password">from web use https://demo-02.schoolofdevops.org:8443/console (login with user developer, any password)</h1>
-<p>oc login -u system:admin</p>
-<h3 id="creating-a-new-project">Creating a new Project</h3>
-<pre><code>oc new-project instavote  --display-name=&quot;Instavote&quot; --description=&quot;Example Voting App&quot;
-
-oc projects
-
-oc project instavote
-</code></pre>
-
-<h2 id="creating-security-context">creating security context</h2>
+                <h2 id="creating-security-context">creating security context</h2>
 <p>oc login -u system:admin -n default
 oc get scc</p>
 <h1 id="oc-apply-f-instavote-sccyaml">oc apply -f instavote-scc.yaml</h1>
@@ -324,6 +297,9 @@ oc get scc</p>
 <h1 id="oc-adm-policy-add-scc-to-user-anyuid-developer">oc adm policy add-scc-to-user anyuid developer</h1>
 <p>oc login -u system:admin -n instavote
 oc adm policy add-scc-to-user privileged -z default</p>
+<p>oc adm policy add-scc-to-user privileged -z system:serviceaccount:instavote:default</p>
+<p>$ oc adm policy add-scc-to-user anyuid system:serviceaccount:myproject:mysvcacct</p>
+<h3 id="users-management">Users Management</h3>
               
             </div>
           </div>

@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Lab K205 - Monitoring setup with HELM - Kubernetes Lab Guide</title>
+  <title>Lab OC107 - Monitoring setup with HELM - Kubernetes Lab Guide</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Lab K205 - Monitoring setup with HELM";
+    var mkdocs_page_name = "Lab OC107 - Monitoring setup with HELM";
     var mkdocs_page_input_path = "helm.md";
     var mkdocs_page_url = null;
   </script>
@@ -135,6 +135,24 @@
                     
     <a class="" href="../9-vote-configmaps_and_secrets/">Lab OC106 - Configurations Management with ConfigMaps</a>
                 </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">Lab OC107 - Monitoring setup with HELM</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#lab-k205-monitoring-setup-with-helm">Lab K205 - Monitoring setup with HELM</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#installing-helm">Installing  Helm</a></li>
+        
+            <li><a class="toctree-l4" href="#setting-up-monitoring-stack-with-helm">Setting up Monitoring Stack with HELM</a></li>
+        
+        </ul>
+    
+
+    </ul>
+                </li>
     </ul>
 	    </li>
           
@@ -153,24 +171,6 @@
                 <li class="">
                     
     <a class="" href="../pods-health-probes/">Lab K204 - Adding health checks with Probes</a>
-                </li>
-                <li class=" current">
-                    
-    <a class="current" href="./">Lab K205 - Monitoring setup with HELM</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l3"><a href="#lab-k205-monitoring-setup-with-helm">Lab K205 - Monitoring setup with HELM</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l4" href="#installing-helm">Installing  Helm</a></li>
-        
-            <li><a class="toctree-l4" href="#setting-up-monitoring-stack-with-helm">Setting up Monitoring Stack with HELM</a></li>
-        
-        </ul>
-    
-
-    </ul>
                 </li>
                 <li class="">
                     
@@ -293,11 +293,11 @@
     
       
         
-          <li>Advanced Administration &raquo;</li>
+          <li>Openshift &raquo;</li>
         
       
     
-    <li>Lab K205 - Monitoring setup with HELM</li>
+    <li>Lab OC107 - Monitoring setup with HELM</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -310,6 +310,12 @@
                 <h1 id="lab-k205-monitoring-setup-with-helm">Lab K205 - Monitoring setup with HELM</h1>
 <p>In this lab, you are going to install and configure helm, and in turns, use it to configure a monitoring system for kubernetes using prometheus and grafana stack.</p>
 <h2 id="installing-helm">Installing  Helm</h2>
+<pre><code>oc login -u system:admin
+oc new-project tiller
+oc project tiller
+export TILLER_NAMESPACE=tiller
+</code></pre>
+
 <p>To install helm you can follow following instructions.</p>
 <pre><code>curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get &gt; get_helm.sh
 chmod 700 get_helm.sh
@@ -320,14 +326,20 @@ chmod 700 get_helm.sh
 <pre><code>helm --help
 </code></pre>
 
+<p>Initialise Helm</p>
+<pre><code>helm init --client-only
+</code></pre>
+
+<pre><code>oc process -f https://github.com/openshift/origin/raw/master/examples/helm/tiller-template.yaml -p TILLER_NAMESPACE=&quot;${TILLER_NAMESPACE}&quot; -p HELM_VERSION=v2.13.1 | oc create -f -
+
+
+oc rollout status deployment tiller
+
+</code></pre>
+
 <p>Lets now setup  RBAC configurations required for Tiller, a component of helm that runs inside the kubernetes cluster.</p>
 <p><code>file: tiller-rbac.yaml</code></p>
-<pre><code>apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: tiller
-  namespace: kube-system
----
+<pre><code>---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -339,16 +351,12 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: tiller
-    namespace: kube-system
+    namespace: tiller
 </code></pre>
 
 <p>Apply the ClusterRole and ClusterRoleBinding.</p>
-<pre><code>kubectl apply -f tiller-rbac.yaml
+<pre><code>oc apply -f tiller-rbac.yaml
 
-</code></pre>
-
-<p>This is where we actually initialize Tiller in our Kubernetes cluster.</p>
-<pre><code>helm init --service-account tiller
 </code></pre>
 
 <h2 id="setting-up-monitoring-stack-with-helm">Setting up Monitoring Stack with HELM</h2>
@@ -362,18 +370,30 @@ cd prometheus
 </code></pre>
 
 <p>To provide custom configurations, copy over the custom values file from <strong>k8s-code</strong> repot.</p>
-<pre><code>cp ../k8s-code/helper/helm/values/prometheus-customvalues.yaml .
+<pre><code>cp ../oc-code/helper/helm/values/prometheus-customvalues.yaml .
 </code></pre>
 
 <p>Review <strong>prometheus-customvalues.yaml</strong> and then launch prometheus stack as,</p>
-<pre><code>helm install --name prometheus --values prometheus-customvalues.yaml  . --dry-run
+<pre><code>
+oc project instavote
+
+helm install --name prometheus --values prometheus-customvalues.yaml  . --dry-run
 helm install --name prometheus --values prometheus-customvalues.yaml  .
+
+cd ..
 
 helm list
 helm status prometheus
+
+oc get pods
 </code></pre>
 
 <p>You should be able to access prometheus UI by using either the <em>nodePort</em> service or a <em>ingress</em> rule.</p>
+<p>If containers in prometheus pod keeps crashing due not being able to write to a path, try running the following.</p>
+<pre><code>oc adm policy add-scc-to-group anyuid system:authenticated
+
+</code></pre>
+
 <h4 id="deploying-grafana-with-helm">Deploying Grafana with HELM</h4>
 <p>You could refer to the <a href="https://github.com/helm/charts/tree/master/stable/grafana">Official Grafana Helm Chart repository</a> before proceeding.</p>
 <p>Search and download a chart for prometheus</p>
@@ -383,7 +403,7 @@ cd grafana
 </code></pre>
 
 <p>To provide custom configurations, copy over the custom values file from <strong>k8s-code</strong> repot.</p>
-<pre><code>cp ../k8s-code/helper/helm/values/grafana-customvalues.yaml .
+<pre><code>cp ../oc-code/helper/helm/values/grafana-customvalues.yaml .
 </code></pre>
 
 <p>Review <strong>grafana-customvalues.yaml</strong> and then launch grafana as,</p>
@@ -415,10 +435,10 @@ helm status grafana
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../10_kubernetes_autoscaling/" class="btn btn-neutral float-right" title="Lab K206 - Auto Scaling Capacity with HPA">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../configuring_authentication_and_authorization/" class="btn btn-neutral float-right" title="Lab K202 - Authentication and Authorization (RBAC)">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../pods-health-probes/" class="btn btn-neutral" title="Lab K204 - Adding health checks with Probes"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../9-vote-configmaps_and_secrets/" class="btn btn-neutral" title="Lab OC106 - Configurations Management with ConfigMaps"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -444,10 +464,10 @@ helm status grafana
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../pods-health-probes/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../9-vote-configmaps_and_secrets/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../10_kubernetes_autoscaling/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../configuring_authentication_and_authorization/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

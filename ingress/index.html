@@ -136,7 +136,11 @@
     
         <ul>
         
-            <li><a class="toctree-l4" href="#pre-requisites">Pre Requisites</a></li>
+            <li><a class="toctree-l4" href="#setting-up-named-based-routing-for-vote-app">Setting up Named Based Routing for Vote App</a></li>
+        
+            <li><a class="toctree-l4" href="#adding-local-dns">Adding Local DNS</a></li>
+        
+            <li><a class="toctree-l4" href="#enabling-tlsssl-certificates">Enabling TLS/SSL Certificates</a></li>
         
         </ul>
     
@@ -146,6 +150,10 @@
                 <li class="">
                     
     <a class="" href="../9-vote-configmaps_and_secrets/">Lab OC106 - Configurations Management with ConfigMaps</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../helm/">Lab OC107 - Monitoring setup with HELM</a>
                 </li>
     </ul>
 	    </li>
@@ -165,10 +173,6 @@
                 <li class="">
                     
     <a class="" href="../pods-health-probes/">Lab K204 - Adding health checks with Probes</a>
-                </li>
-                <li class="">
-                    
-    <a class="" href="../helm/">Lab K205 - Monitoring setup with HELM</a>
                 </li>
                 <li class="">
                     
@@ -306,11 +310,7 @@
             <div class="section">
               
                 <h1 id="adding-openshift-routes">Adding Openshift Routes</h1>
-<h2 id="pre-requisites">Pre Requisites</h2>
-<ul>
-<li>Openshift configured with Router</li>
-</ul>
-<h3 id="setting-up-named-based-routing-for-vote-app">Setting up Named Based Routing for Vote App</h3>
+<h2 id="setting-up-named-based-routing-for-vote-app">Setting up Named Based Routing for Vote App</h2>
 <p>We will direct all our request to the route controller now, but with differnt hostname e.g. <strong>vote.example.com</strong> or <strong>results.example.com</strong>. And it should direct to the correct service based on the host name.</p>
 <p>In order to achieve this you, as a user would create a <strong>route</strong> object with a set of rules,</p>
 <pre><code class="bash">
@@ -366,7 +366,7 @@ oc get routes
 <li>A user creates a route object with the rules. This could be a named based or a path based routing.</li>
 <li>An route controller constantly monitors for route objects. The moment it detects one, it creates a rule and adds it to the traefik load balancer. This rule maps to the route specs.</li>
 </ul>
-<h4 id="adding-local-dns">Adding Local DNS</h4>
+<h2 id="adding-local-dns">Adding Local DNS</h2>
 <p>You have created the route rules based on hostnames e.g.  <strong>vote.example.com</strong>. In order for you to be able to access those, there has to be a dns entry pointing to your nodes, which are running traefik.</p>
 <pre><code class="bash">
   vote.example.com     -------+                        +----- vote:80
@@ -398,7 +398,7 @@ oc get routes
 </ul>
 <p>And then access the app urls using http://vote.example.com or http://results.example.com</p>
 <p><img alt="Name Based Routing" src="../images/domain-name.png" /></p>
-<h3 id="adding-tlsssl-certificates">Adding TLS/SSL Certificates</h3>
+<h2 id="enabling-tlsssl-certificates">Enabling TLS/SSL Certificates</h2>
 <p><code>file: vote-route.yaml</code></p>
 <pre><code>apiVersion: v1
 kind: Route
