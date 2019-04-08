@@ -317,6 +317,16 @@
             <div class="section">
               
                 <h1 id="steps-to-set-up-nfs-based-persistent-volumes">Steps to set up NFS based Persistent Volumes</h1>
+<p>Lets first update the default security context for the current namespace to enable containers to run with privileged permissions. This is needed to make sure <strong>postgres</strong> has the permissions to write files to database path, which is restricted by default.</p>
+<pre><code>oc login -u system:admin
+
+oc adm policy add-scc-to-user privileged -z default
+
+oc login -u developer
+oc project instavote
+
+</code></pre>
+
 <p>In order to use the dynamic provisioning, lets first update the  db deploymentconfig  with <em>volume</em> and <em>volumeMounts</em> configs as given in example below.</p>
 <p><code>file: db-dc-pvc.yaml</code></p>
 <pre><code>apiVersion: apps.openshift.io/v1
@@ -403,12 +413,12 @@ oc get pvc,pv
 
 <h2 id="set-up-nfs-provisioner-in-kubernetes">Set up NFS Provisioner in kubernetes</h2>
 <p>Change into nfs provisioner installation dir</p>
-<pre><code>cd k8s-code/storage
+<pre><code>cd oc-code/storage
 </code></pre>
 
 <p>Deploy nfs-client provisioner.</p>
 <pre><code>oc login -u system:admin -n instavote
-oc apply -f nfs
+oc apply -f nfs/
 
 </code></pre>
 

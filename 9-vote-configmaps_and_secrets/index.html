@@ -328,21 +328,21 @@ data:
 <li>OPTION_B=VI</li>
 </ol>
 <p>Lets create the configmap object</p>
-<pre><code>kubectl get cm
-kubectl apply -f vote-cm.yaml
-kubectl get cm
-kubectl describe cm vote
+<pre><code>oc get cm
+oc apply -f vote-cm.yaml
+oc get cm
+oc describe cm vote
 
 
 </code></pre>
 
 <p>In order to use this configmap in the deployment, we need to reference it from the deployment file.</p>
 <p>Check the deployment file for vote add for the following block.</p>
-<p>file: <code>vote-deploy.yaml</code></p>
+<p>file: <code>vote-dc.yaml</code></p>
 <pre><code>...
     spec:
       containers:
-      - image: schoolofdevops/vote
+      - image: initcron/oc-vote:v2
         imagePullPolicy: Always
         name: vote
         envFrom:
@@ -355,13 +355,13 @@ kubectl describe cm vote
 </code></pre>
 
 <p>So when you create your deployment, these configurations will be made available to your application. In this example, the values defined in the configmap (Visa and Mastercard) will override the default values(CATS and DOGS) present in your source code.</p>
-<pre><code>kubectl apply -f vote-deploy.yaml
+<pre><code>oc apply -f vote-dc.yaml
 </code></pre>
 
 <p>Watch the monitoring screen for deployment in progress.</p>
-<pre><code>kubectl get deploy --show-labels
-kubectl get rs --show-labels
-kubectl  rollout status deploy/vote
+<pre><code>oc get dc --show-labels
+oc get rc --show-labels
+oc  rollout status dc vote
 
 </code></pre>
 
