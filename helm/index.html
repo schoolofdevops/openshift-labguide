@@ -148,6 +148,10 @@
         
             <li><a class="toctree-l4" href="#setting-up-monitoring-stack-with-helm">Setting up Monitoring Stack with HELM</a></li>
         
+            <li><a class="toctree-l4" href="#install-prometheus-with-helm">Install Prometheus with Helm</a></li>
+        
+            <li><a class="toctree-l4" href="#deploying-grafana-with-helm">Deploying Grafana with HELM</a></li>
+        
         </ul>
     
 
@@ -361,7 +365,7 @@ subjects:
 
 <h2 id="setting-up-monitoring-stack-with-helm">Setting up Monitoring Stack with HELM</h2>
 <p>You will now setup prometheus and grafana monitoring stacks with helm, with a few customisations.</p>
-<h4 id="install-prometheus-with-helm">Install Prometheus with Helm</h4>
+<h2 id="install-prometheus-with-helm">Install Prometheus with Helm</h2>
 <p>Before proceeding, you could review the <a href="https://github.com/helm/charts/tree/master/stable/prometheus">Official Prometheus Helm Chart</a>  from the repository.</p>
 <p>Search and download a chart for prometheus</p>
 <pre><code>cd ~
@@ -370,7 +374,7 @@ helm fetch --untar stable/prometheus
 cd prometheus
 </code></pre>
 
-<p>To provide custom configurations, copy over the custom values file from <strong>k8s-code</strong> repot.</p>
+<p>To provide custom configurations, copy over the custom values file from <strong>oc-code</strong> repot.</p>
 <pre><code>cp ../oc-code/helper/helm/values/prometheus-customvalues.yaml .
 </code></pre>
 
@@ -395,7 +399,14 @@ oc get pods
 
 </code></pre>
 
-<h4 id="deploying-grafana-with-helm">Deploying Grafana with HELM</h4>
+<p>and then delete the pod running <em>prometheus-server</em> so that it gets launched automatically.</p>
+<pre><code>oc get pods
+kubectl delete pod prometheus-server-6c847f8d7f-5t5cl
+oc get pods
+</code></pre>
+
+<p><code>warning: replace the pod id with what you on your system</code></p>
+<h2 id="deploying-grafana-with-helm">Deploying Grafana with HELM</h2>
 <p>You could refer to the <a href="https://github.com/helm/charts/tree/master/stable/grafana">Official Grafana Helm Chart repository</a> before proceeding.</p>
 <p>Search and download a chart for prometheus</p>
 <pre><code>helm search grafana
@@ -403,7 +414,7 @@ helm fetch --untar stable/grafana
 cd grafana
 </code></pre>
 
-<p>To provide custom configurations, copy over the custom values file from <strong>k8s-code</strong> repot.</p>
+<p>To provide custom configurations, copy over the custom values file from <strong>oc-code</strong> repot.</p>
 <pre><code>cp ../oc-code/helper/helm/values/grafana-customvalues.yaml .
 </code></pre>
 
@@ -415,7 +426,7 @@ helm list
 helm status grafana
 </code></pre>
 
-<p>You should be able to access grafana UI by using either the <em>nodePort</em> service or a <em>ingress</em> rule.</p>
+<p>You should be able to access grafana UI by using either the <em>nodePort</em> service or a <em>route</em>.</p>
 <p><img alt="Grafana UI" src="../images/grafana.png" /></p>
 <p>credentials for grafana</p>
 <ul>
@@ -427,6 +438,8 @@ helm status grafana
 <pre><code>helm upgrade -f grafana-customvalues.yaml grafana .
 </code></pre>
 
+<h3 id="exercise">Exercise</h3>
+<p>After you launch the prometheus stack, observe if <strong>node-exporter</strong>, which runs as  a daemon set has any pods running? If not, why?  Find out the root cause and fix it. </p>
 <h5 id="summary">Summary</h5>
 <p>In this lab, we not only learnt about HELM, a kubernetes package manager, but  also have setup a sophisticated health monitoring system with prometheus and grafana.</p>
               
