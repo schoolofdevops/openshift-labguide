@@ -9,6 +9,9 @@ deploymentconfig has mainly three responsibilities,
   * Update Strategy: Define a release strategy and update the pods accordingly.
 
 ```
+oc projects
+oc project instavote
+
 cd projects/instavote/dev/
 cp vote-rc.yaml vote-dc.yaml
 ```
@@ -20,7 +23,7 @@ cp vote-rc.yaml vote-dc.yaml
 
 ```
 apiVersion: apps.openshift.io/v1
-kind: deploymentConfig
+kind: DeploymentConfig
 metadata:
   name: vote
 spec:
@@ -79,6 +82,11 @@ oc get rc --show-labels
 oc get deploy,pods,rc
 oc rollout status dc  vote
 oc get pods --show-labels
+```
+
+Also apply the service spec created earlier.
+```
+oc apply -f vote-svc.yaml
 oc get endpoints
 ```
 Sample Output
@@ -104,7 +112,7 @@ template:
   spec:
     containers:
       - name: app
-        image: schoolofdevops/vote:v2
+        image: initcron/oc-vote:v2
 
 ```
 
@@ -122,10 +130,11 @@ Observe rollout status and monitoring screen.
 
 ```
 
-oc rollout history deploy/vote
+oc rollout history dc vote
 
-oc rollout history deploy/vote --revision=1
+oc rollout history dc vote --revision=1
 
+oc rollout history dc vote --revision=1
 ```
 
 Try updating the version of the image from v2 to v3,v4,v5. Repeat a few times to observe how it rolls out a new version.  
@@ -137,7 +146,7 @@ file: vote-dc.yaml
 spec:
   containers:
     - name: app
-      image: schoolofdevops/vote:rgjerdf
+      image: initcron/oc-vote:rgjerdf
 
 ```
 
@@ -146,11 +155,11 @@ apply
 ```
 oc apply -f vote-dc.yaml
 
-oc rollout status
+oc rollout status dc vote
 
-oc rollout history deploy/vote
+oc rollout history dc vote
 
-oc rollout history deploy/vote --revision=xx
+oc rollout history dc vote --revision=xx
 ```
 
 where replace xxx with revisions
@@ -160,7 +169,7 @@ Find out the previous revision with sane configs.
 To undo to a sane version (for example revision 3)
 
 ```
-oc rollout undo deploy/vote --to-revision=2
+oc rollout undo dc vote --to-revision=2
 ```
 
 

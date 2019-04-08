@@ -1,19 +1,13 @@
 ## Deploying Devops Demo PHP Application for GitHub Repo
+
 In this section we are deploying sample devops demo PHP app from GitHub repo.
-we use the same cluster earlier deployed simple aaplication with diffrent project namespace.
+we use the same cluster earlier deployed simple aaplication with **myproject**  as  namespace/project.
 This docs demonstrates how to get a simple project up and running on OpenShift. Application that will serve a welcome page Welcome to the DevOps Demo Application.
 
-* Go to Home Page.
-* click on create project.
-* Enter the project name Display name and describtions.
-![project](images/php1.png)
-
-After creating the project namespace swaitch to yor new project name space you can see here new worksapce.
-
-![project](images/php2.png)
+Make sure you have selected **myproject**. If not  switch  to it from web console.
 
 * click the Browse catalog you can see here multiple programming languages and databases.
-* select the php you can see here php+mysql and only php choose php
+* select the php you can see here php+mysql and only php choose *php*
 
 ![project](images/php3.png)
 
@@ -27,9 +21,9 @@ https://github.com/devopsdemoapps/devops-demo-app.git
 ```
 ![project](images/php4.png)
 
-* click on the Advance option
+* click on the advance options
 
-In this section yoc can provides following options.
+In this section you can provides following options.
 * reference
 
 * Tag
@@ -55,6 +49,7 @@ In this section yoc can provides following options.
 ### Working with OpenShift CLI
 
 ```
+ oc project myproject 
  oc get pods
 ```
 

@@ -44,14 +44,16 @@ Bootstrap an openshift environment
 ```
 oc cluster up --help
 
-oc cluster up --public-hostname=demo-02.schoolofdevops.org
+oc cluster up --public-hostname=xxxx.xyz.org
 
 ```
+
+`replace xxxx.xyz.org with the public hostname of your host`
 
 
 from web use https://HOST:8443/console (login with user developer, any password)
 
-To login using console 
+To login using console
 
 ```
 oc login -u system:admin
@@ -77,4 +79,16 @@ oc project instavote
 oc config get-contexts
 
 
+```
+
+
+
+## Check out Supporting code
+
+Check out the supporting code from the repository given below. This contains directory structure and supporting YAML files and scaffold useful during this course.
+
+```
+git clone https://github.com/schoolofdevops/oc-code.git
+cd oc-code
+ls
 ```
