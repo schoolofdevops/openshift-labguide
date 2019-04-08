@@ -1,4 +1,4 @@
-site_name: Kubernetes Lab Guide
+site_name: Openshift Lab Guide
 pages:
   - Home: "index.md"
   - Just Enough Docker:
