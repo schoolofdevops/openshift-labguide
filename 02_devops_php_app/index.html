@@ -307,19 +307,12 @@
               
                 <h2 id="deploying-devops-demo-php-application-for-github-repo">Deploying Devops Demo PHP Application for GitHub Repo</h2>
 <p>In this section we are deploying sample devops demo PHP app from GitHub repo.
-we use the same cluster earlier deployed simple aaplication with diffrent project namespace.
+we use the same cluster earlier deployed simple aaplication with <strong>myproject</strong>  as  namespace/project.
 This docs demonstrates how to get a simple project up and running on OpenShift. Application that will serve a welcome page Welcome to the DevOps Demo Application.</p>
-<ul>
-<li>Go to Home Page.</li>
-<li>click on create project.</li>
-<li>Enter the project name Display name and describtions.
-<img alt="project" src="../images/php1.png" /></li>
-</ul>
-<p>After creating the project namespace swaitch to yor new project name space you can see here new worksapce.</p>
-<p><img alt="project" src="../images/php2.png" /></p>
+<p>Make sure you have selected <strong>myproject</strong>. If not  switch  to it from web console.</p>
 <ul>
 <li>click the Browse catalog you can see here multiple programming languages and databases.</li>
-<li>select the php you can see here php+mysql and only php choose php</li>
+<li>select the php you can see here php+mysql and only php choose <em>php</em></li>
 </ul>
 <p><img alt="project" src="../images/php3.png" /></p>
 <ul>
@@ -336,9 +329,9 @@ configuration</p>
 
 <p><img alt="project" src="../images/php4.png" /></p>
 <ul>
-<li>click on the Advance option</li>
+<li>click on the advance options</li>
 </ul>
-<p>In this section yoc can provides following options.
+<p>In this section you can provides following options.
 * reference</p>
 <ul>
 <li>
@@ -365,7 +358,8 @@ configuration</p>
  In the web console, view the Overview page for your project to determine the web address for your application. Click the web address displayed right side web console open this link on new tab.</p>
 <p><img alt="project" src="../images/php10.png" /></p>
 <h3 id="working-with-openshift-cli">Working with OpenShift CLI</h3>
-<pre><code> oc get pods
+<pre><code> oc project myproject 
+ oc get pods
 </code></pre>
 
 <p>[output]</p>

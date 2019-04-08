@@ -122,6 +122,8 @@
         
             <li><a class="toctree-l4" href="#create-and-switch-to-a-new-project">Create and switch to a new Project</a></li>
         
+            <li><a class="toctree-l4" href="#check-out-supporting-code">Check out Supporting code</a></li>
+        
         </ul>
     
 
@@ -342,12 +344,13 @@ ln -s  ~/openshift-origin-server-v3.11.0-0cbc58b-linux-64bit/oadm /usr/local/bin
 <p>Bootstrap an openshift environment</p>
 <pre><code>oc cluster up --help
 
-oc cluster up --public-hostname=demo-02.schoolofdevops.org
+oc cluster up --public-hostname=xxxx.xyz.org
 
 </code></pre>
 
+<p><code>replace xxxx.xyz.org with the public hostname of your host</code></p>
 <p>from web use https://HOST:8443/console (login with user developer, any password)</p>
-<p>To login using console </p>
+<p>To login using console</p>
 <pre><code>oc login -u system:admin
 </code></pre>
 
@@ -367,6 +370,13 @@ oc project instavote
 oc config get-contexts
 
 
+</code></pre>
+
+<h2 id="check-out-supporting-code">Check out Supporting code</h2>
+<p>Check out the supporting code from the repository given below. This contains directory structure and supporting YAML files and scaffold useful during this course.</p>
+<pre><code>git clone https://github.com/schoolofdevops/oc-code.git
+cd oc-code
+ls
 </code></pre>
               
             </div>

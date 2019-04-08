@@ -315,14 +315,17 @@
 <li>Scalability: Schedule/delete pods to meet the desired count.</li>
 <li>Update Strategy: Define a release strategy and update the pods accordingly.</li>
 </ul>
-<pre><code>cd projects/instavote/dev/
+<pre><code>oc projects
+oc project instavote
+
+cd projects/instavote/dev/
 cp vote-rc.yaml vote-dc.yaml
 </code></pre>
 
 <p><a href="https://docs.okd.io/latest/dev_guide/deployments/deployment_strategies.html">deploymentconfig spec</a>  contains everything that replica set has + strategy. Lets add it as follows,</p>
 <p><code>file: vote-dc.yaml</code></p>
 <pre><code>apiVersion: apps.openshift.io/v1
-kind: deploymentConfig
+kind: DeploymentConfig
 metadata:
   name: vote
 spec:
@@ -372,6 +375,10 @@ oc get rc --show-labels
 oc get deploy,pods,rc
 oc rollout status dc  vote
 oc get pods --show-labels
+</code></pre>
+
+<p>Also apply the service spec created earlier.</p>
+<pre><code>oc apply -f vote-svc.yaml
 oc get endpoints
 </code></pre>
 
@@ -393,7 +400,7 @@ template:
   spec:
     containers:
       - name: app
-        image: schoolofdevops/vote:v2
+        image: initcron/oc-vote:v2
 
 </code></pre>
 
