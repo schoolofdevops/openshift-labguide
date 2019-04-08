@@ -163,7 +163,7 @@
     <a class="current" href="./">Lab K206 - Auto Scaling Capacity with HPA</a>
     <ul class="subnav">
             
-    <li class="toctree-l3"><a href="#kubernetes-horizonntal-pod-autoscaling">Kubernetes Horizonntal Pod Autoscaling</a></li>
+    <li class="toctree-l3"><a href="#auto-scaling-with-openshift">Auto Scaling with Openshift</a></li>
     
         <ul>
         
@@ -309,9 +309,9 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="kubernetes-horizonntal-pod-autoscaling">Kubernetes Horizonntal Pod Autoscaling</h1>
-<p>With Horizontal Pod Autoscaling, Kubernetes automatically scales the number of pods in a replication controller, deployment or replica set based on observed CPU utilization (or, with alpha support, on some other, application-provided metrics).</p>
-<p>The Horizontal Pod Autoscaler is implemented as a Kubernetes API resource and a controller. The resource determines the behavior of the controller. The controller periodically adjusts the number of replicas in a replication controller or deployment to match the observed average CPU utilization to the target specified by user</p>
+                <h1 id="auto-scaling-with-openshift">Auto Scaling with Openshift</h1>
+<p>With Horizontal Pod Autoscaling, openshift automatically scales the number of pods in a replication controller, deployment or replica set based on observed CPU utilization (or, with alpha support, on some other, application-provided metrics).</p>
+<p>The Horizontal Pod Autoscaler is implemented as a openshift API resource and a controller. The resource determines the behavior of the controller. The controller periodically adjusts the number of replicas in a replication controller or deployment to match the observed average CPU utilization to the target specified by user</p>
 <h3 id="prerequisites">Prerequisites</h3>
 <ul>
 <li><a href="https://github.com/kubernetes-incubator/metrics-server">Metrics Server</a>.
@@ -319,7 +319,7 @@
 <li>Resource Requests and Limits. Defining <a href="https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-resource/#specify-a-cpu-request-and-a-cpu-limit">CPU</a>as well as <a href="https://kubernetes.io/docs/tasks/configure-pod-container/assign-memory-resource/">Memory</a> requirements for containers in Pod Spec is a must</li>
 </ul>
 <h4 id="deploying-metrics-server">Deploying Metrics Server</h4>
-<p>Kubernetes Horizontal Pod Autoscaler along with <code>oc adm top</code> command depends on the core monitoring data such as cpu and memory utilization which is scraped and provided by kubelet, which comes with in built cadvisor component.  Earlier, you would have to install a additional component called <strong>heapster</strong> in order to collect this data and feed it to the <strong>hpa</strong> controller. With 1.8 version of Kubernetes, this behavior is changed, and now <strong>metrics-server</strong> would provide this data. Metric server  is being included as a essential component for kubernetes cluster, and being incroporated into kubernetes to be included out of box. It stores the core monitoring information using in-memory data store.</p>
+<p>openshift Horizontal Pod Autoscaler along with <code>oc adm top</code> command depends on the core monitoring data such as cpu and memory utilization which is scraped and provided by kubelet, which comes with in built cadvisor component.  Earlier, you would have to install a additional component called <strong>heapster</strong> in order to collect this data and feed it to the <strong>hpa</strong> controller. With 1.8 version of kubernetes, this behavior is changed, and now <strong>metrics-server</strong> would provide this data. Metric server  is being included as a essential component for kubernetes cluster, and being incroporated into kubernetes to be included out of box. It stores the core monitoring information using in-memory data store.</p>
 <p>If you try to pull monitoring information using the following commands</p>
 <pre><code>oc adm top pod
 
@@ -480,7 +480,7 @@ vote-loadtest   1         1            10m
 </ul>
 <p><img alt="Monitoring Deployments with grafana" src="../images/hpa-02.png" /></p>
 <h5 id="summary">Summary</h5>
-<p>In this lab, you have successfull configured and demonstrated dynamic scaling ability of kubernetes using horizontalpodautoscalers. You have also learnt about a new <strong>jobs</strong> controller type for running one off or batch jobs.</p>
+<p>In this lab, you have successfull configured and demonstrated dynamic scaling ability of openshift using horizontalpodautoscalers. You have also learnt about a new <strong>jobs</strong> controller type for running one off or batch jobs.</p>
 <h5 id="reading-list">Reading List</h5>
 <ul>
 <li><a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/instrumentation/monitoring_architecture.md">Kubernetes Monitoring Architecture</a></li>
