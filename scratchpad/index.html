@@ -300,6 +300,10 @@ oc adm policy add-scc-to-user privileged -z default</p>
 <p>oc adm policy add-scc-to-user privileged -z system:serviceaccount:instavote:default</p>
 <p>$ oc adm policy add-scc-to-user anyuid system:serviceaccount:myproject:mysvcacct</p>
 <h3 id="users-management">Users Management</h3>
+<h3 id="administration">Administration</h3>
+<p>Idling an application stops the pod and will launch again when there is traffic received on the corresponding service.</p>
+<pre><code>oc idle vote
+</code></pre>
               
             </div>
           </div>
