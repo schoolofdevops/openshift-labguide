@@ -1,8 +1,16 @@
-# Lab K205 - Monitoring setup with HELM 
+# Lab K205 - Monitoring setup with HELM
 
 In this lab, you are going to install and configure helm, and in turns, use it to configure a monitoring system for kubernetes using prometheus and grafana stack.
 
 ## Installing  Helm
+
+
+```
+oc login -u system:admin
+oc new-project tiller
+oc project tiller
+export TILLER_NAMESPACE=tiller
+```
 
 To install helm you can follow following instructions.
 
@@ -12,9 +20,24 @@ chmod 700 get_helm.sh
 ./get_helm.sh
 ```
 
+
 Verify the installtion is successful,
 ```
 helm --help
+```
+
+Initialise Helm
+```
+helm init --client-only
+```
+
+
+```
+oc process -f https://github.com/openshift/origin/raw/master/examples/helm/tiller-template.yaml -p TILLER_NAMESPACE="${TILLER_NAMESPACE}" -p HELM_VERSION=v2.13.1 | oc create -f -
+
+
+oc rollout status deployment tiller
+
 ```
 
 Lets now setup  RBAC configurations required for Tiller, a component of helm that runs inside the kubernetes cluster.
@@ -22,11 +45,6 @@ Lets now setup  RBAC configurations required for Tiller, a component of helm tha
 `file: tiller-rbac.yaml`
 
 ```
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: tiller
-  namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -39,19 +57,16 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: tiller
-    namespace: kube-system
+    namespace: tiller
 ```
 
 Apply the ClusterRole and ClusterRoleBinding.
 ```
-kubectl apply -f tiller-rbac.yaml
+oc apply -f tiller-rbac.yaml
 
 ```
 
-This is where we actually initialize Tiller in our Kubernetes cluster.
-```
-helm init --service-account tiller
-```
+
 
 ## Setting up Monitoring Stack with HELM
 
@@ -74,22 +89,34 @@ To provide custom configurations, copy over the custom values file from **k8s-co
 
 
 ```
-cp ../k8s-code/helper/helm/values/prometheus-customvalues.yaml .
+cp ../oc-code/helper/helm/values/prometheus-customvalues.yaml .
 ```
 
 Review **prometheus-customvalues.yaml** and then launch prometheus stack as,
 
 ```
+
+oc project instavote
+
 helm install --name prometheus --values prometheus-customvalues.yaml  . --dry-run
 helm install --name prometheus --values prometheus-customvalues.yaml  .
 
+cd ..
+
 helm list
 helm status prometheus
+
+oc get pods
 ```
 
 You should be able to access prometheus UI by using either the *nodePort* service or a *ingress* rule.
 
+If containers in prometheus pod keeps crashing due not being able to write to a path, try running the following.
 
+```
+oc adm policy add-scc-to-group anyuid system:authenticated
+
+```
 #### Deploying Grafana with HELM
 
 You could refer to the [Official Grafana Helm Chart repository](https://github.com/helm/charts/tree/master/stable/grafana) before proceeding.
@@ -106,7 +133,7 @@ To provide custom configurations, copy over the custom values file from **k8s-co
 
 
 ```
-cp ../k8s-code/helper/helm/values/grafana-customvalues.yaml .
+cp ../oc-code/helper/helm/values/grafana-customvalues.yaml .
 ```
 
 Review **grafana-customvalues.yaml** and then launch grafana as,

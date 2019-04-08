@@ -1,76 +1,15 @@
 
-# Lab K104 - Adding HA and Scalability with ReplicaSets
+# Lab K104 - Adding HA and Scalability with Replication Controllers
 
 If you are not running a monitoring screen, start it in a new terminal with the following command.
 
 ```
-watch -n 1 kubectl get  pod,deploy,rs,svc
+watch -n 1 kubectl get  pod,rc
 ```
 
+## Adding Replication Controller  Configurations
 
-### Creating a Namespace and switching to it
-
-
-
-Check current config
-```
-
-kubectl config view
-```
-
-You could also examine the current configs in file **cat ~/.kube/config**
-
-## Creating a namespace
-
-Namespaces offers separation of resources running on the same physical infrastructure into virtual clusters. It is typically useful in mid to large scale environments with multiple projects, teams and need separate scopes. It could also be useful to map to your workflow stages e.g. dev, stage, prod.   
-
-Lets create a namespace called **instavote**  
-
-```
-kubectl get ns
-
-kubectl create namespace instavote
-
-kubectl get ns
-
-```
-And switch to it
-
-```
-
-kubectl config --help
-
-kubectl config get-contexts
-
-kubectl config current-context
-
-kubectl config set-context --help
-
-kubectl config set-context --current --namespace=instavote
-
-kubectl config get-contexts
-
-kubectl config view
-
-
-```
-
-
-**Exercise**: Go back to the monitoring screen and observe what happens after switching the namespace.
-
-
-To understand how ReplicaSets works with the selectors  lets launch a pod in the new namespace with existing specs.
-
-```
-cd k8s-code/pods
-kubectl apply -f vote-pod.yaml
-
-kubectl get pods
-```
-
-## Adding ReplicaSet Configurations
-
-Lets now write the spec for the Rplica Set. This is going to mainly contain,
+Lets now write the spec for the Replication Controller . This is going to mainly contain,
 
   * replicas
   * selector
@@ -87,7 +26,7 @@ cd projects/instavote/dev
 ```
 
 
-`edit file: vote-rs.yaml`
+`edit file: vote-rc.yaml`
 
 ```
 apiVersion: xxx
@@ -116,25 +55,22 @@ spec:
               cpu: "250m"
 ```
 
-Above file already containts the spec that you had written for the pod. You would observe its already been added as part of *spec.template* for replicaset.
+Above file already containts the spec that you had written for the pod. You would observe its already been added as part of *spec.template* for Replication Controller.
 
-Lets now add the details specific to replicaset.
+Lets now add the details specific to Replication Controller.
 
-*file: vote-rs.yaml*
+*file: vote-rc.yaml*
 
 ```
 apiVersion: apps/v1
-kind: ReplicaSet
+kind: ReplicationController
 metadata:
   name: vote
 spec:
-  replicas: 4
   minReadySeconds: 20
+  replicas: 4
   selector:
-    matchLabels:
-      role: vote
-    matchExpressions:
-      - {key: version, operator: In, values: [v1, v2, v3, v4, v5]}
+    role: vote
   template:
     metadata:
       name: vote
@@ -159,13 +95,13 @@ The complete file will look similar to above. Lets now go ahead and apply it.
 
 
 ```
-kubectl apply -f vote-rs.yaml --dry-run
+kubectl apply -f vote-rc.yaml --dry-run
 
-kubectl apply -f vote-rs.yaml
+kubectl apply -f vote-rc.yaml
 
-kubectl get rs
+kubectl get rc
 
-kubectl describe rs vote
+kubectl describe rc vote
 
 kubectl get pods
 
@@ -174,7 +110,7 @@ kubectl get pods --show-labels
 
 ### High Availability
 
-Try deleting pods created by the replicaset,
+Try deleting pods created by the Replication Controller,
 
 `replace pod-xxxx and pod-yyyy with actuals`
 ```
@@ -185,7 +121,7 @@ kubectl delete pods vote-xxxx vote-yyyy
 Observe as the pods are automatically created again.
 
 
-Lets now delete the pod created independent of replica set.
+Lets now delete the pod created independent of replication  controller.
 
 ```
 kubectl get pods
@@ -199,7 +135,7 @@ Observe what happens.
 
 
 ```
-kubectl edit rs/vote
+kubectl edit rc/vote
 ```
 
 Update the version of the image from **schoolofdevops/vote:v1** to **schoolofdevops/vote:v2**
@@ -209,7 +145,7 @@ Save the file.
 Observe what happens ?
 
   * Did application get  updated.
-  * Did updating replicaset launched new pods to deploy new version ?
+  * Did updating Replication Controller launched new pods to deploy new version ?
 
 
 ### Scalability
@@ -217,7 +153,7 @@ Observe what happens ?
 Scaling up application is as easy as running,  
 
 ```
-kubectl scale --replicas=8 rs/vote
+kubectl scale --replicas=8 rc/vote
 
 kubectl get pods --show-labels
 ```  
@@ -230,4 +166,4 @@ Observe what happens
 
 #### Summary
 
-With **ReplicaSets** your application is now high available as well as scalable. However ReplicaSet by itself does not have the intelligence to trigger a rollout if you update the version. For that, you are going to need a **deployment** which is something you would learn in an upcoming  lesson.
+With **Replication Controllers** your application is now high available as well as scalable. However Replication Controller by itself does not have the intelligence to trigger a rollout if you update the version. For that, you are going to need a **deployment** which is something you would learn in an upcoming  lesson.

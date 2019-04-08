@@ -10,19 +10,19 @@ In this project , you would write definitions for deploying the vote application
 
 ## Tasks
 
-  * Create deployments for all applications
+  * Create deploymentconfigs for all applications
   * Define services for each tier applicable
   * Launch/apply the definitions
 
 
 Following table depicts the state of readiness of the above services.
 
-| App     | Deployment     | Service |
+| App     | Deployment Config   | Service |
 | :------------- | :------------- | :------------- |
-| vote       | ready       | ready       |
-| redis       | ready       | ready       |
+| vote       | Applied       | Applied       |
+| redis       | Applied       | Applied       |
 | worker       | TODO       | n/a       |
-| db       | ready       | ready       |
+| db       | Available       | Available       |
 | results       | TODO       | TODO       |
 
 

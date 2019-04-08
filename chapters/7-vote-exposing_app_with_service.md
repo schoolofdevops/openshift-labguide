@@ -1,6 +1,6 @@
 # LAB K105 - Load Balancing and Service Discovery with Services
 
-In this lab, you would not only publish the application deployed with replicaset earlier, but also learn about the load balancing and service discovery features offered by kubernetes.
+In this lab, you would not only publish the application deployed with replication controller earlier, but also learn about the load balancing and service discovery features offered by kubernetes.
 
 
 Concepts related to Kubernetes Services are depicted in the following diagram,
@@ -109,7 +109,7 @@ If you refresh the page, you should also notice its sending traffic to diffent p
 #### Exercises  
 
   * Change the selector criteria to use a non existant label. Use `kubectl edit svc./vote` to update and apply the configuration. Observe the output of describe command and check the endpoints. Do you see any ?  How are  selectors and pod labels related ?
-  * Observe the number of endpoints. Then change the scale of replicas created by the replicasets. Does it have any effect on the number of endpoints ?    
+  * Observe the number of endpoints. Then change the scale of replicas created by the replication controllers. Does it have any effect on the number of endpoints ?    
 
 
 

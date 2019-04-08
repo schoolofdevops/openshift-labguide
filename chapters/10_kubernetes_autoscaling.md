@@ -12,13 +12,13 @@ The Horizontal Pod Autoscaler is implemented as a Kubernetes API resource and a 
 
 #### Deploying Metrics Server
 
-Kubernetes Horizontal Pod Autoscaler along with `kubectl top` command depends on the core monitoring data such as cpu and memory utilization which is scraped and provided by kubelet, which comes with in built cadvisor component.  Earlier, you would have to install a additional component called **heapster** in order to collect this data and feed it to the **hpa** controller. With 1.8 version of Kubernetes, this behavior is changed, and now **metrics-server** would provide this data. Metric server  is being included as a essential component for kubernetes cluster, and being incroporated into kubernetes to be included out of box. It stores the core monitoring information using in-memory data store.
+Kubernetes Horizontal Pod Autoscaler along with `oc adm top` command depends on the core monitoring data such as cpu and memory utilization which is scraped and provided by kubelet, which comes with in built cadvisor component.  Earlier, you would have to install a additional component called **heapster** in order to collect this data and feed it to the **hpa** controller. With 1.8 version of Kubernetes, this behavior is changed, and now **metrics-server** would provide this data. Metric server  is being included as a essential component for kubernetes cluster, and being incroporated into kubernetes to be included out of box. It stores the core monitoring information using in-memory data store.
 
 If you try to pull monitoring information using the following commands
 ```
-kubectl top pod
+oc adm top pod
 
-kubectl top node
+oc adm top node
 ```
 
 it does not show it, rather gives you a error message similar to
@@ -35,12 +35,12 @@ Deploy  metric server with the following commands,
 ```
 cd ~
 git clone  https://github.com/kubernetes-incubator/metrics-server.git
-kubectl apply -f metrics-server/deploy/1.8+/
+oc apply -f metrics-server/deploy/1.8+/
 ```
 
 Validate
 ```
-kubectl get deploy,pods -n kube-system --selector='k8s-app=metrics-server'
+oc get deploy,pods -n kube-system
 ```
 
 Monitoring has been setup.
@@ -55,20 +55,20 @@ To apply a patch to metrics server,
 ```
 wget -c https://gist.githubusercontent.com/initcron/1a2bd25353e1faa22a0ad41ad1c01b62/raw/008e23f9fbf4d7e2cf79df1dd008de2f1db62a10/k8s-metrics-server.patch.yaml
 
-kubectl patch deploy metrics-server -p "$(cat k8s-metrics-server.patch.yaml)" -n kube-system
+oc patch deploy metrics-server -p "$(cat k8s-metrics-server.patch.yaml)" -n kube-system
 ```
 
 Now validate with
 
 ```
-kubectl top node
-kubectl top pod
+oc adm top node
+oc adm top pod
 ```
 
 where expected output shoudl be similar to,
 
 ```
-kubectl top node
+oc top node
 
 NAME     CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
 vis-01   145m         7%     2215Mi          57%
@@ -95,25 +95,25 @@ spec:
   maxReplicas: 15
   targetCPUUtilizationPercentage: 40
   scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
+    apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
     name: vote
 ```
 
 apply
 
 ```
-kubectl apply -f vote-hpa.yaml
+oc apply -f vote-hpa.yaml
 ```
 
 Validate
 
 ```
-kubectl get hpa
+oc get hpa
 
-kubectl describe hpa vote
+oc describe hpa vote
 
-kubectl get pod,deploy
+oc get pod,deploy
 
 
 ```
@@ -146,13 +146,13 @@ spec:
 And launch the loadtest
 
 ```
-kubectl apply -f loadtest-job.yaml
+oc apply -f loadtest-job.yaml
 ```
 
 To monitor while the load test is running ,
 
 ```
-watch kubectl top pods
+watch oc top pods
 
 ```
 
@@ -160,15 +160,15 @@ watch kubectl top pods
 To get information about the job
 
 ```
-kubectl get jobs
-kubectl describe  job loadtest
+oc get jobs
+oc describe  job loadtest
 
 ```
 
 To check the load test output
 
 ```
-kubectl logs  -f loadtest-xxxx
+oc logs  -f loadtest-xxxx
 ```
 [replace **loadtest-xxxx** with the actual pod id.]
 
@@ -179,7 +179,7 @@ kubectl logs  -f loadtest-xxxx
 ```
 ** SIEGE 3.0.8
 ** Preparing 15 concurrent users for battle.
-root@kube-01:~# kubectl logs vote-loadtest-tv6r2 -f
+root@kube-01:~# oc logs vote-loadtest-tv6r2 -f
 ** SIEGE 3.0.8
 ** Preparing 15 concurrent users for battle.
 
@@ -210,7 +210,7 @@ the directive 'show-logfile' to false.
 Now check the job status again,
 
 ```
-kubectl get jobs
+oc get jobs
 NAME            DESIRED   SUCCESSFUL   AGE
 vote-loadtest   1         1            10m
 

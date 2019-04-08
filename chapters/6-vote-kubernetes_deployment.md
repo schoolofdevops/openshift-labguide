@@ -1,41 +1,41 @@
-# LAB K106 - Defining Release Strategy with  Deployment
+# LAB K106 - Defining Release Strategy with  deploymentconfig
 
-A Deployment is a higher level abstraction which sits on top of replica sets and allows you to manage the way applications are deployed, rolled back at a controlled rate.
+A deploymentconfig is a higher level abstraction which sits on top of replica sets and allows you to manage the way applications are deployed, rolled back at a controlled rate.
 
-Deployment has mainly two responsibilities,
+deploymentconfig has mainly three responsibilities,
 
-  * Provide Fault Tolerance: Maintain the number of replicas for a type of service/app. Schedule/delete pods to meet the desired count.
+  * Availability: Maintain the number of replicas for a type of service/app.
+  * Scalability: Schedule/delete pods to meet the desired count.
   * Update Strategy: Define a release strategy and update the pods accordingly.
 
 ```
-/k8s-code/projects/instavote/dev/
-cp vote-rs.yaml vote-deploy.yaml
+cd projects/instavote/dev/
+cp vote-rc.yaml vote-dc.yaml
 ```
 
 
-Deployment spec (deployment.spec) contains everything that replica set has + strategy. Lets add it as follows,
+[deploymentconfig spec](https://docs.okd.io/latest/dev_guide/deployments/deployment_strategies.html)  contains everything that replica set has + strategy. Lets add it as follows,
 
-`file: vote-deploy.yaml`
+`file: vote-dc.yaml`
 
 ```
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps.openshift.io/v1
+kind: deploymentConfig
 metadata:
   name: vote
 spec:
+  minReadySeconds: 20
+  replicas: 12
+  selector:
+    role: vote
   strategy:
-    type: RollingUpdate
-    rollingUpdate:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 120
       maxSurge: 2
       maxUnavailable: 1
-  revisionHistoryLimit: 4
-  replicas: 12
-  minReadySeconds: 20
-  selector:
-    matchLabels:
-      role: vote
-    matchExpressions:
-      - {key: version, operator: In, values: [v1, v2, v3, v4, v5]}
   template:
     metadata:
       name: vote
@@ -46,7 +46,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: schoolofdevops/vote:v1
+          image: initcron/oc-vote:v1
           resources:
             requests:
               memory: "64Mi"
@@ -60,70 +60,40 @@ spec:
 This time, start monitoring with --show-labels options added.
 
 ```
-watch -n 1 kubectl get  pod,deploy,rs,svc --show-labels
+watch -n 1 oc get  dc,rc,pods --show-labels
 ```
 
 
-Lets  create the Deployment. Do monitor the labels of the pod while applying this.
+Lets  create the deploymentconfig. Do monitor the labels of the pod while applying this.
 
 ```
-kubectl apply -f vote-deploy.yaml
+oc apply -f vote-dc.yaml
 ```
 
-Observe the chances to pod labels, specifically the **pod-template-hash**.
 
-
-Now that the deployment is created. To validate,
+Now that the deploymentconfig is created. To validate,
 
 ```
-kubectl get deployment
-kubectl get rs --show-labels
-kubectl get deploy,pods,rs
-kubectl rollout status deployment/vote
-kubectl get pods --show-labels
+oc get dc
+oc get rc --show-labels
+oc get deploy,pods,rc
+oc rollout status dc  vote
+oc get pods --show-labels
+oc get endpoints
 ```
 Sample Output
 ```
-kubectl get deployments
+oc get dc
 NAME       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 vote   3         3         3            1           3m
 ```
 
 
-## Scaling a deployment  
-
-To scale a deployment in Kubernetes:
-
-```
-kubectl scale deployment/vote --replicas=15
-
-kubectl rollout status deployment/vote
-
-```
-
-Sample output:
-```
-
-Waiting for rollout to finish: 5 of 15 updated replicas are available...
-Waiting for rollout to finish: 6 of 15 updated replicas are available...
-deployment "vote" successfully rolled out
-```
-
-You could also update the deployment by editing it.
-
-```
-kubectl edit deploy/vote
-```
-
-[change replicas to 8 from the editor, save and observe]
-
-
-
 ## Rolling Updates in Action
 
-Now, update the deployment spec to apply
+Now, update the deploymentconfig spec to apply
 
-file: vote-deploy.yaml
+file: vote-dc.yaml
 ```
 
 ...
@@ -141,9 +111,9 @@ template:
 apply
 
 ```
-kubectl apply -f vote-deploy.yaml
+oc apply -f vote-dc.yaml
 
-kubectl rollout status deployment/vote
+oc rollout status deploymentconfig/vote
 ```
 
 Observe rollout status and monitoring screen.
@@ -152,9 +122,9 @@ Observe rollout status and monitoring screen.
 
 ```
 
-kubectl rollout history deploy/vote
+oc rollout history deploy/vote
 
-kubectl rollout history deploy/vote --revision=1
+oc rollout history deploy/vote --revision=1
 
 ```
 
@@ -162,7 +132,7 @@ Try updating the version of the image from v2 to v3,v4,v5. Repeat a few times to
 
 ## Undo and Rollback
 
-file: vote-deploy.yaml
+file: vote-dc.yaml
 ```
 spec:
   containers:
@@ -174,13 +144,13 @@ spec:
 apply
 
 ```
-kubectl apply -f vote-deploy.yaml
+oc apply -f vote-dc.yaml
 
-kubectl rollout status
+oc rollout status
 
-kubectl rollout history deploy/vote
+oc rollout history deploy/vote
 
-kubectl rollout history deploy/vote --revision=xx
+oc rollout history deploy/vote --revision=xx
 ```
 
 where replace xxx with revisions
@@ -190,5 +160,11 @@ Find out the previous revision with sane configs.
 To undo to a sane version (for example revision 3)
 
 ```
-kubectl rollout undo deploy/vote --to-revision=2
+oc rollout undo deploy/vote --to-revision=2
 ```
+
+
+##### References
+
+  * [deploymentconfig documentation](https://docs.okd.io/latest/dev_guide/deployments/deployment_strategies.html)
+  * [deploymentconfig api refence](https://docs.okd.io/latest/rest_api/apis-apps.openshift.io/v1.DeploymentConfig.html)
