@@ -1,8 +1,19 @@
 # Steps to set up NFS based Persistent Volumes
 
+Lets first update the default security context for the current namespace to enable containers to run with privileged permissions. This is needed to make sure **postgres** has the permissions to write files to database path, which is restricted by default.
 
+```
+oc login -u system:admin
+
+oc adm policy add-scc-to-user privileged -z default
+
+oc login -u developer
+oc project instavote
+
+```
 
 In order to use the dynamic provisioning, lets first update the  db deploymentconfig  with *volume* and *volumeMounts* configs as given in example below.
+
 
 
 `file: db-dc-pvc.yaml`
@@ -49,11 +60,11 @@ spec:
 Apply *db-dc-pvc.yaml*  as
 
 ```
-kubectl apply -f db-dc-pvc.yaml
+oc apply -f db-dc-pvc.yaml
 
-kubectl get pod -o wide --selector='role=db'
+oc get pod -o wide --selector='role=db'
 
-kubectl get pvc,pv
+oc get pvc,pv
 ```
 
   * Observe and note which host the pod for *db* is launched.
@@ -93,12 +104,12 @@ spec:
 create the Persistent Volume Claim and validate
 
 ```
-kubectl get pvc
+oc get pvc
 
 
-kubectl apply -f db-pvc.yaml
+oc apply -f db-pvc.yaml
 
-kubectl get pvc,pv
+oc get pvc,pv
 
 ```
 
@@ -108,7 +119,7 @@ kubectl get pvc,pv
 Change into nfs provisioner installation dir
 
 ```
-cd k8s-code/storage
+cd oc-code/storage
 ```
 
 
@@ -116,7 +127,7 @@ Deploy nfs-client provisioner.
 
 ```
 oc login -u system:admin -n instavote
-kubectl apply -f nfs
+oc apply -f nfs/
 
 ```
 
@@ -161,17 +172,17 @@ oc adm policy add-scc-to-user privileged -z nfs-provisioner
 Now lets continue with the persistent volume setup.
 
 ```
-kubectl get storageclass
-kubectl get pods
-kubectl logs -f nfs-provisioner-0
+oc get storageclass
+oc get pods
+oc logs -f nfs-provisioner-0
 
 ```
 
 Now, observe the output of  the following commands,
 
 ```
-kubectl get pvc,pv
-kubectl get pods
+oc get pvc,pv
+oc get pods
 ```
 
   * Do you see pvc bound to pv ?

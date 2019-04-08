@@ -72,7 +72,7 @@ oc apply -f tiller-rbac.yaml
 
 You will now setup prometheus and grafana monitoring stacks with helm, with a few customisations.
 
-#### Install Prometheus with Helm
+## Install Prometheus with Helm
 
 
 Before proceeding, you could review the [Official Prometheus Helm Chart](https://github.com/helm/charts/tree/master/stable/prometheus)  from the repository.
@@ -80,12 +80,13 @@ Before proceeding, you could review the [Official Prometheus Helm Chart](https:/
 Search and download a chart for prometheus
 
 ```
+cd ~
 helm search prometheus
 helm fetch --untar stable/prometheus
 cd prometheus
 ```
 
-To provide custom configurations, copy over the custom values file from **k8s-code** repot.
+To provide custom configurations, copy over the custom values file from **oc-code** repot.
 
 
 ```
@@ -117,7 +118,18 @@ If containers in prometheus pod keeps crashing due not being able to write to a 
 oc adm policy add-scc-to-group anyuid system:authenticated
 
 ```
-#### Deploying Grafana with HELM
+
+and then delete the pod running *prometheus-server* so that it gets launched automatically.
+
+```
+oc get pods
+kubectl delete pod prometheus-server-6c847f8d7f-5t5cl
+oc get pods
+```
+
+`warning: replace the pod id with what you on your system`
+
+## Deploying Grafana with HELM
 
 You could refer to the [Official Grafana Helm Chart repository](https://github.com/helm/charts/tree/master/stable/grafana) before proceeding.
 
@@ -129,7 +141,7 @@ helm fetch --untar stable/grafana
 cd grafana
 ```
 
-To provide custom configurations, copy over the custom values file from **k8s-code** repot.
+To provide custom configurations, copy over the custom values file from **oc-code** repot.
 
 
 ```
@@ -146,7 +158,7 @@ helm list
 helm status grafana
 ```
 
-You should be able to access grafana UI by using either the *nodePort* service or a *ingress* rule.
+You should be able to access grafana UI by using either the *nodePort* service or a *route*.
 
 
 ![Grafana UI](images/grafana.png)
@@ -164,6 +176,10 @@ If you update values and would like to apply to existing helm release, use a com
 ```
 helm upgrade -f grafana-customvalues.yaml grafana .
 ```
+
+### Exercise
+
+After you launch the prometheus stack, observe if **node-exporter**, which runs as  a daemon set has any pods running? If not, why?  Find out the root cause and fix it. 
 
 
 ##### Summary

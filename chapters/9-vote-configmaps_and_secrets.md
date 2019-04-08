@@ -1,4 +1,4 @@
-# Configurations Management with ConfigMaps 
+# Configurations Management with ConfigMaps
 
 Configmap is one of the ways to provide configurations to your application.
 
@@ -27,10 +27,10 @@ In the above given configmap, we define two environment variables,
 Lets create the configmap object
 
 ```
-kubectl get cm
-kubectl apply -f vote-cm.yaml
-kubectl get cm
-kubectl describe cm vote
+oc get cm
+oc apply -f vote-cm.yaml
+oc get cm
+oc describe cm vote
 
 
 ```
@@ -38,13 +38,13 @@ In order to use this configmap in the deployment, we need to reference it from t
 
 Check the deployment file for vote add for the following block.
 
-file: `vote-deploy.yaml`
+file: `vote-dc.yaml`
 
 ```
 ...
     spec:
       containers:
-      - image: schoolofdevops/vote
+      - image: initcron/oc-vote:v2
         imagePullPolicy: Always
         name: vote
         envFrom:
@@ -59,15 +59,15 @@ file: `vote-deploy.yaml`
 So when you create your deployment, these configurations will be made available to your application. In this example, the values defined in the configmap (Visa and Mastercard) will override the default values(CATS and DOGS) present in your source code.
 
 ```
-kubectl apply -f vote-deploy.yaml
+oc apply -f vote-dc.yaml
 ```
 
 Watch the monitoring screen for deployment in progress.
 
 ```
-kubectl get deploy --show-labels
-kubectl get rs --show-labels
-kubectl  rollout status deploy/vote
+oc get dc --show-labels
+oc get rc --show-labels
+oc  rollout status dc vote
 
 ```
 

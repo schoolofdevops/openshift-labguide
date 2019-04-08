@@ -134,6 +134,7 @@ spec:
     kind: Service
     name: vote
   tls:
+    insecureEdgeTerminationPolicy: Allow
     termination: edge
 ```
 

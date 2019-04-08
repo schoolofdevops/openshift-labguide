@@ -141,7 +141,14 @@ Try updating the version of the image from v2 to v3,v4,v5. Repeat a few times to
 
 ## Undo and Rollback
 
-file: vote-dc.yaml
+Lets try to introduce an error by providing a non existing image. To make an ad hoc change, we would use edit commnd this time.
+
+```
+oc edit dc vote
+```
+
+and update the image to something similar to following,
+
 ```
 spec:
   containers:

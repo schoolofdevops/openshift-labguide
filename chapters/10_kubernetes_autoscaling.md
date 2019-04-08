@@ -1,8 +1,8 @@
-# Kubernetes Horizonntal Pod Autoscaling
+# Auto Scaling with Openshift
 
-With Horizontal Pod Autoscaling, Kubernetes automatically scales the number of pods in a replication controller, deployment or replica set based on observed CPU utilization (or, with alpha support, on some other, application-provided metrics).
+With Horizontal Pod Autoscaling, openshift automatically scales the number of pods in a replication controller, deployment or replica set based on observed CPU utilization (or, with alpha support, on some other, application-provided metrics).
 
-The Horizontal Pod Autoscaler is implemented as a Kubernetes API resource and a controller. The resource determines the behavior of the controller. The controller periodically adjusts the number of replicas in a replication controller or deployment to match the observed average CPU utilization to the target specified by user
+The Horizontal Pod Autoscaler is implemented as a openshift API resource and a controller. The resource determines the behavior of the controller. The controller periodically adjusts the number of replicas in a replication controller or deployment to match the observed average CPU utilization to the target specified by user
 
 ### Prerequisites
 
@@ -12,7 +12,7 @@ The Horizontal Pod Autoscaler is implemented as a Kubernetes API resource and a 
 
 #### Deploying Metrics Server
 
-Kubernetes Horizontal Pod Autoscaler along with `oc adm top` command depends on the core monitoring data such as cpu and memory utilization which is scraped and provided by kubelet, which comes with in built cadvisor component.  Earlier, you would have to install a additional component called **heapster** in order to collect this data and feed it to the **hpa** controller. With 1.8 version of Kubernetes, this behavior is changed, and now **metrics-server** would provide this data. Metric server  is being included as a essential component for kubernetes cluster, and being incroporated into kubernetes to be included out of box. It stores the core monitoring information using in-memory data store.
+openshift Horizontal Pod Autoscaler along with `oc adm top` command depends on the core monitoring data such as cpu and memory utilization which is scraped and provided by kubelet, which comes with in built cadvisor component.  Earlier, you would have to install a additional component called **heapster** in order to collect this data and feed it to the **hpa** controller. With 1.8 version of kubernetes, this behavior is changed, and now **metrics-server** would provide this data. Metric server  is being included as a essential component for kubernetes cluster, and being incroporated into kubernetes to be included out of box. It stores the core monitoring information using in-memory data store.
 
 If you try to pull monitoring information using the following commands
 ```
@@ -226,7 +226,7 @@ vote-loadtest   1         1            10m
 
 ##### Summary
 
-In this lab, you have successfull configured and demonstrated dynamic scaling ability of kubernetes using horizontalpodautoscalers. You have also learnt about a new **jobs** controller type for running one off or batch jobs.
+In this lab, you have successfull configured and demonstrated dynamic scaling ability of openshift using horizontalpodautoscalers. You have also learnt about a new **jobs** controller type for running one off or batch jobs.
 
 
 ##### Reading List
