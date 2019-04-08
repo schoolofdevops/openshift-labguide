@@ -412,10 +412,11 @@ oc rollout status deploymentconfig/vote
 
 <p>Observe rollout status and monitoring screen.</p>
 <pre><code>
-oc rollout history deploy/vote
+oc rollout history dc vote
 
-oc rollout history deploy/vote --revision=1
+oc rollout history dc vote --revision=1
 
+oc rollout history dc vote --revision=1
 </code></pre>
 
 <p>Try updating the version of the image from v2 to v3,v4,v5. Repeat a few times to observe how it rolls out a new version.  </p>
@@ -424,24 +425,24 @@ oc rollout history deploy/vote --revision=1
 <pre><code>spec:
   containers:
     - name: app
-      image: schoolofdevops/vote:rgjerdf
+      image: initcron/oc-vote:rgjerdf
 
 </code></pre>
 
 <p>apply</p>
 <pre><code>oc apply -f vote-dc.yaml
 
-oc rollout status
+oc rollout status dc vote
 
-oc rollout history deploy/vote
+oc rollout history dc vote
 
-oc rollout history deploy/vote --revision=xx
+oc rollout history dc vote --revision=xx
 </code></pre>
 
 <p>where replace xxx with revisions</p>
 <p>Find out the previous revision with sane configs.</p>
 <p>To undo to a sane version (for example revision 3)</p>
-<pre><code>oc rollout undo deploy/vote --to-revision=2
+<pre><code>oc rollout undo dc vote --to-revision=2
 </code></pre>
 
 <h5 id="references">References</h5>
