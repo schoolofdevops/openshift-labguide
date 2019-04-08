@@ -358,11 +358,11 @@ spec:
 </code></pre>
 
 <p>Apply <em>db-dc-pvc.yaml</em>  as</p>
-<pre><code>kubectl apply -f db-dc-pvc.yaml
+<pre><code>oc apply -f db-dc-pvc.yaml
 
-kubectl get pod -o wide --selector='role=db'
+oc get pod -o wide --selector='role=db'
 
-kubectl get pvc,pv
+oc get pvc,pv
 </code></pre>
 
 <ul>
@@ -392,12 +392,12 @@ spec:
 </code></pre>
 
 <p>create the Persistent Volume Claim and validate</p>
-<pre><code>kubectl get pvc
+<pre><code>oc get pvc
 
 
-kubectl apply -f db-pvc.yaml
+oc apply -f db-pvc.yaml
 
-kubectl get pvc,pv
+oc get pvc,pv
 
 </code></pre>
 
@@ -408,7 +408,7 @@ kubectl get pvc,pv
 
 <p>Deploy nfs-client provisioner.</p>
 <pre><code>oc login -u system:admin -n instavote
-kubectl apply -f nfs
+oc apply -f nfs
 
 </code></pre>
 
@@ -441,15 +441,15 @@ oc describe sts nfs-provisioner
 <li>How does the above command fix it ? What does it do?</li>
 </ul>
 <p>Now lets continue with the persistent volume setup.</p>
-<pre><code>kubectl get storageclass
-kubectl get pods
-kubectl logs -f nfs-provisioner-0
+<pre><code>oc get storageclass
+oc get pods
+oc logs -f nfs-provisioner-0
 
 </code></pre>
 
 <p>Now, observe the output of  the following commands,</p>
-<pre><code>kubectl get pvc,pv
-kubectl get pods
+<pre><code>oc get pvc,pv
+oc get pods
 </code></pre>
 
 <ul>
