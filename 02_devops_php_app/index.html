@@ -6,9 +6,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  
+  <meta name="author" content="Gourav Shah">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Lab OC102 - Deploying app from Openshift Console - Openshift Lab Guide</title>
+  <title>Lab OC102 - Deploying app from Openshift Console - Openshift Tutorial</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -19,13 +19,23 @@
     // Current page data
     var mkdocs_page_name = "Lab OC102 - Deploying app from Openshift Console";
     var mkdocs_page_input_path = "02_devops_php_app.md";
-    var mkdocs_page_url = null;
+    var mkdocs_page_url = "/02_devops_php_app/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
   <script src="../js/modernizr-2.8.3.min.js" defer></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script> 
+  
+  <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', '', 'openshift-tutorial.schoolofdevops.com');
+      ga('send', 'pageview');
+  </script>
   
 </head>
 
@@ -36,7 +46,7 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
       <div class="wy-side-nav-search">
-        <a href=".." class="icon icon-home"> Openshift Lab Guide</a>
+        <a href=".." class="icon icon-home"> Openshift Tutorial</a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
@@ -180,7 +190,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../cluster-administration/">Lab OC208 - Cluster Administration</a>
+    <a class="" href="../cluster-administration/">Lab 208 - Cluster Administration</a>
                 </li>
     </ul>
 	    </li>
@@ -279,7 +289,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="..">Openshift Lab Guide</a>
+        <a href="..">Openshift Tutorial</a>
       </nav>
 
       
@@ -297,6 +307,9 @@
     
     <li>Lab OC102 - Deploying app from Openshift Console</li>
     <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/schoolofdevops/openshift-labguide/edit/chapters/manuscript/02_devops_php_app.md"
+          class="icon icon-github"> Edit on GitHub</a>
       
     </li>
   </ul>
@@ -358,14 +371,14 @@ configuration</p>
  In the web console, view the Overview page for your project to determine the web address for your application. Click the web address displayed right side web console open this link on new tab.</p>
 <p><img alt="project" src="../images/php10.png" /></p>
 <h3 id="working-with-openshift-cli">Working with OpenShift CLI</h3>
-<pre><code> oc project myproject 
+<pre><code> oc project myproject
  oc get pods
 </code></pre>
 
 <p>[output]</p>
 <pre><code> NAME                READY     STATUS      RESTARTS   AGE
-front-end-1-build   0/1       Completed   0          22m
-front-end-1-x59fd   1/1       Running     0          21m
+frontend-1-build   0/1       Completed   0          22m
+frontend-1-x59fd   1/1       Running     0          21m
 </code></pre>
 
 <p>getting all replicas</p>
@@ -374,7 +387,7 @@ front-end-1-x59fd   1/1       Running     0          21m
 
 <p>[output]</p>
 <pre><code> NAME          DESIRED   CURRENT   READY     AGE
-front-end-1   1         1         1         22m
+frontend-1   1         1         1         22m
 </code></pre>
 
 <p>getting all services</p>
@@ -383,16 +396,16 @@ front-end-1   1         1         1         22m
 
 <p>[output]</p>
 <pre><code> NAME        TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
-front-end   ClusterIP   172.30.25.85   &lt;none&gt;        8080/TCP,8443/TCP   24m
+frontend   ClusterIP   172.30.25.85   &lt;none&gt;        8080/TCP,8443/TCP   24m
 </code></pre>
 
-<p>describe front-end services</p>
-<pre><code> oc describe svc front-end
-Name:              front-end
+<p>describe frontend services</p>
+<pre><code> oc describe svc frontend
+Name:              frontend
 Namespace:         devops-demo-app
-Labels:            app=front-end
+Labels:            app=frontend
 Annotations:       openshift.io/generated-by=OpenShiftWebConsole
-Selector:          deploymentconfig=front-end
+Selector:          deploymentconfig=frontend
 Type:              ClusterIP
 IP:                172.30.25.85
 Port:              8080-tcp  8080/TCP
@@ -411,7 +424,7 @@ Events:            &lt;none&gt;
 
 <p>[output]</p>
 <pre><code>NAME        REVISION   DESIRED   CURRENT   TRIGGERED BY
-front-end   1          1         1         config,image(front-end:latest)\
+frontend   1          1         1         config,image(frontend:latest)\
 
 </code></pre>
 
@@ -421,7 +434,7 @@ front-end   1          1         1         config,image(front-end:latest)\
 
 <p>[output]</p>
 <pre><code>NAME          TYPE      FROM          STATUS     STARTED          DURATION
-front-end-1   Source    Git@6ef2140   Complete   29 minutes ago   34s
+frontend-1   Source    Git@6ef2140   Complete   29 minutes ago   34s
 
 </code></pre>
 
@@ -431,28 +444,28 @@ front-end-1   Source    Git@6ef2140   Complete   29 minutes ago   34s
 
 <p>[output]</p>
 <pre><code>NAME        HOST/PORT                                          PATH      SERVICES    PORT       TERMINATION   WILDCARD
-front-end   front-end-devops-demo-app.128.199.213.193.nip.io             front-end   8080-tcp                 None
+frontend   frontend-devops-demo-app.128.199.213.193.nip.io             frontend   8080-tcp                 None
 </code></pre>
 
 <p>describe route</p>
-<pre><code>oc describe route front-end
+<pre><code>oc describe route frontend
 </code></pre>
 
 <p>[ouutput]</p>
-<pre><code>Name:           front-end
+<pre><code>Name:           frontend
 Namespace:      devops-demo-app
 Created:        32 minutes ago
-Labels:         app=front-end
+Labels:         app=frontend
 Annotations:        openshift.io/generated-by=OpenShiftWebConsole
             openshift.io/host.generated=true
-Requested Host:     front-end-devops-demo-app.128.199.213.193.nip.io
+Requested Host:     frontend-devops-demo-app.128.199.213.193.nip.io
               exposed on router router 32 minutes ago
 Path:           &lt;none&gt;
 TLS Termination:    &lt;none&gt;
 Insecure Policy:    &lt;none&gt;
 Endpoint Port:      8080-tcp
 
-Service:    front-end
+Service:    frontend
 Weight:     100 (100%)
 Endpoints:  172.17.0.8:8443, 172.17.0.8:8080
 
@@ -477,6 +490,8 @@ Endpoints:  172.17.0.8:8443, 172.17.0.8:8080
   <div role="contentinfo">
     <!-- Copyright etc -->
     
+      <p>Copyright @ 2017-2020 Gourav Shah, School of Devops. Some rights reserved. License CC BY-NC-SA</p>
+    
   </div>
 
   Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
@@ -491,6 +506,8 @@ Endpoints:  172.17.0.8:8443, 172.17.0.8:8080
 
   <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/schoolofdevops/openshift-labguide/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
         <span><a href="../oc-cluster-up/" style="color: #fcfcfc;">&laquo; Previous</a></span>
