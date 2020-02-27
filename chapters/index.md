@@ -1,6 +1,6 @@
-# Openshift Lab Guide
+# Openshift Tutorial
 
-Welcome to the Openshift Course  by School of Devops
+Welcome to the Openshift Tutorial  by School of Devops
 
 This is a Lab Guide which goes along with the Docker, Kubernetes and Openshift courses conducted by School of Devops.
 

@@ -49,15 +49,15 @@ In this section you can provides following options.
 ### Working with OpenShift CLI
 
 ```
- oc project myproject 
+ oc project myproject
  oc get pods
 ```
 
  [output]
 ```
  NAME                READY     STATUS      RESTARTS   AGE
-front-end-1-build   0/1       Completed   0          22m
-front-end-1-x59fd   1/1       Running     0          21m
+frontend-1-build   0/1       Completed   0          22m
+frontend-1-x59fd   1/1       Running     0          21m
 ```
 
  getting all replicas
@@ -67,7 +67,7 @@ front-end-1-x59fd   1/1       Running     0          21m
  [output]
 ```
  NAME          DESIRED   CURRENT   READY     AGE
-front-end-1   1         1         1         22m
+frontend-1   1         1         1         22m
 ```
 
 getting all services
@@ -78,17 +78,17 @@ getting all services
  [output]
 ```
  NAME        TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
-front-end   ClusterIP   172.30.25.85   <none>        8080/TCP,8443/TCP   24m
+frontend   ClusterIP   172.30.25.85   <none>        8080/TCP,8443/TCP   24m
 ```
- describe front-end services
+ describe frontend services
 
 ```
- oc describe svc front-end
-Name:              front-end
+ oc describe svc frontend
+Name:              frontend
 Namespace:         devops-demo-app
-Labels:            app=front-end
+Labels:            app=frontend
 Annotations:       openshift.io/generated-by=OpenShiftWebConsole
-Selector:          deploymentconfig=front-end
+Selector:          deploymentconfig=frontend
 Type:              ClusterIP
 IP:                172.30.25.85
 Port:              8080-tcp  8080/TCP
@@ -108,7 +108,7 @@ Events:            <none>
 [output]
 ```
 NAME        REVISION   DESIRED   CURRENT   TRIGGERED BY
-front-end   1          1         1         config,image(front-end:latest)\
+frontend   1          1         1         config,image(frontend:latest)\
 
 ```
 
@@ -119,7 +119,7 @@ oc get build
 [output]
 ```
 NAME          TYPE      FROM          STATUS     STARTED          DURATION
-front-end-1   Source    Git@6ef2140   Complete   29 minutes ago   34s
+frontend-1   Source    Git@6ef2140   Complete   29 minutes ago   34s
 
 ```
 getting route
@@ -129,28 +129,28 @@ oc get route
 [output]
 ```
 NAME        HOST/PORT                                          PATH      SERVICES    PORT       TERMINATION   WILDCARD
-front-end   front-end-devops-demo-app.128.199.213.193.nip.io             front-end   8080-tcp                 None
+frontend   frontend-devops-demo-app.128.199.213.193.nip.io             frontend   8080-tcp                 None
 ```
 describe route
 ```
-oc describe route front-end
+oc describe route frontend
 ```
 [ouutput]
 ```
-Name:			front-end
+Name:			frontend
 Namespace:		devops-demo-app
 Created:		32 minutes ago
-Labels:			app=front-end
+Labels:			app=frontend
 Annotations:		openshift.io/generated-by=OpenShiftWebConsole
 			openshift.io/host.generated=true
-Requested Host:		front-end-devops-demo-app.128.199.213.193.nip.io
+Requested Host:		frontend-devops-demo-app.128.199.213.193.nip.io
 			  exposed on router router 32 minutes ago
 Path:			<none>
 TLS Termination:	<none>
 Insecure Policy:	<none>
 Endpoint Port:		8080-tcp
 
-Service:	front-end
+Service:	frontend
 Weight:		100 (100%)
 Endpoints:	172.17.0.8:8443, 172.17.0.8:8080
 
